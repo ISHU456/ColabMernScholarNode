@@ -116,7 +116,7 @@ const AssignmentInterface = ({ assignment, user, isTeacher, onBack, fetchAssignm
         if (submissionFile) formData.append('files', submissionFile);
 
         try {
-            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/submit', formData, {
+            await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/submit`, formData, {
                 headers: { 
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'multipart/form-data'

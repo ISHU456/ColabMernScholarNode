@@ -27,7 +27,7 @@ const ResultEntry = () => {
     const syncProfile = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/profile', config);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/profile`, config);
         // If data from backend has more updated permissions than store, update store
         dispatch(updateProfile(data));
       } catch (err) { console.error("Permission sync failed:", err); }
@@ -61,7 +61,7 @@ const ResultEntry = () => {
     const fetchCourses = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses', config);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses`, config);
         const myCourses = data.map(c => {
            const isAssigned = c.facultyAssigned?.some(f => (f._id || f).toString() === user._id.toString());
            
@@ -542,7 +542,7 @@ const ResultEntry = () => {
                     <button 
                       onClick={async () => {
                         try {
-                          await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/access-requests', { courseId }, { headers: { Authorization: `Bearer ${user.token}` } });
+                          await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/access-requests`, { courseId }, { headers: { Authorization: `Bearer ${user.token}` } });
                           alert("Access Request Transmitted. Synchronizing with Neural Governance Hub.");
                         } catch (err) {
                           alert(err.response?.data?.message || "Transmission Failure.");

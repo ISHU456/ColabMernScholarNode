@@ -32,7 +32,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
     const fetchCourses = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses', config);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses`, config);
         setCourses(res.data);
         if (res.data.length > 0 && !initialCourse && !initialSemester) {
             const defaultSem = (user.role === 'admin' ? 1 : (user.assignedSemesters?.[0] || 1));

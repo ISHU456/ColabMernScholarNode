@@ -149,7 +149,7 @@ const AppContent = () => {
     if (user && user.department && !storedDept) {
       const fetchAndSyncDept = async () => {
         try {
-          const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/departments');
+          const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/departments`);
           const dept = res.data.find(d => d.code === user.department);
           if (dept) {
             localStorage.setItem('selectedDepartment', JSON.stringify(dept));

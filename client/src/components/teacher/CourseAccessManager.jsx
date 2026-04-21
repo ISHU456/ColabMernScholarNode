@@ -120,7 +120,7 @@ const CourseAccessManager = ({ user, initialSemester, initialCourse, onPersistCh
     setIsLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.put('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/course-access/update', {
+      await axios.put(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/course-access/update`, {
         courseId: selectedCourse._id,
         studentId: overrideModal.studentId,
         state: overrideState,

@@ -76,7 +76,7 @@ const Courses = () => {
             params: { departmentId: deptId, semester: activeSem === 'All' ? undefined : activeSem.split('-')[1] },
             headers: { Authorization: `Bearer ${user.token}` }
           }),
-          axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/departments')
+          axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/departments`)
         ]);
         setCourses(coursesRes.data);
         setDepartments(deptsRes.data);
@@ -172,7 +172,7 @@ const Courses = () => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses', formData, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses`, formData, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('New academic module established.');

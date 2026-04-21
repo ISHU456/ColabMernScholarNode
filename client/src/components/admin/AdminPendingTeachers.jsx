@@ -12,7 +12,7 @@ const AdminPendingTeachers = ({ user }) => {
     const fetchPendingTeachers = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/pending', {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/pending`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setPendingTeachers(res.data);

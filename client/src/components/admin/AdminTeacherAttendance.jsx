@@ -34,7 +34,7 @@ const AdminTeacherAttendance = ({ user }) => {
     const handleMark = async (teacherId, status, checkIn = '09:00 AM', checkOut = '05:00 PM') => {
         setUpdatingId(teacherId);
         try {
-            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/attendance', {
+            await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/attendance`, {
                 teacherId, date, status, checkIn, checkOut, remarks: 'Marked by System Administrator'
             }, {
                 headers: { Authorization: `Bearer ${user.token}` }

@@ -9,7 +9,7 @@ const AdminAccessRequests = ({ user }) => {
 
   const fetchRequests = async () => {
     try {
-      const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/access-requests/pending', {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/access-requests/pending`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setRequests(data);

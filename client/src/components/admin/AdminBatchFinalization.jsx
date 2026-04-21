@@ -53,7 +53,7 @@ const AdminBatchFinalization = ({ user }) => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses', {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setCourses(data);

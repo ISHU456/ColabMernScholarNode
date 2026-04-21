@@ -181,7 +181,7 @@ const AttendanceManager = ({ user, initialSemester, initialCourse, onPersistChan
     setSavingStudentId(studentId);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/attendance/bulk-mark', {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/attendance/bulk-mark`, {
         courseId: selectedCourse._id,
         date: attendanceDate,
         semester: semester,
@@ -226,7 +226,7 @@ const AttendanceManager = ({ user, initialSemester, initialCourse, onPersistChan
       }
 
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/attendance/bulk-mark', {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/attendance/bulk-mark`, {
         courseId: selectedCourse._id,
         date: attendanceDate,
         semester: semester,

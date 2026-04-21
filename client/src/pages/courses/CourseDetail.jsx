@@ -252,7 +252,7 @@ const CourseDetail = () => {
   const handleStartLive = async (cId) => {
     try {
       // Trigger notification first
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications/broadcast-live', { courseId: cId }, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications/broadcast-live`, { courseId: cId }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
     } catch (err) {
@@ -285,7 +285,7 @@ const CourseDetail = () => {
     setTimeout(() => setShowProgressToast(false), 3000);
 
     try {
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/progress/update', {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/progress/update`, {
         courseId,
         itemId,
         itemType
@@ -455,7 +455,7 @@ const CourseDetail = () => {
 
   const sendPulse = async () => {
     try {
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/pulse', { courseId }, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/pulse`, { courseId }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
     } catch (err) { 
