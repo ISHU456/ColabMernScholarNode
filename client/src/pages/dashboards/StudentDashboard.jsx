@@ -1308,11 +1308,11 @@ const StudentDashboard = () => {
                      <div className="relative z-10">
                         <div className="text-xs font-semibold uppercase tracking-[0.3em] opacity-60 mb-2">Neural Bank</div>
                         <div className="text-6xl font-semibold flex items-baseline gap-3">
-                           {gamifiedStats.stats.coins} <span className="text-xl opacity-60">COINS</span>
+                           {gamifiedStats?.stats?.coins || 0} <span className="text-xl opacity-60">COINS</span>
                         </div>
                         <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/10 w-fit drop-shadow-xl backdrop-blur-md">
                            <Flame size={16} className="text-orange-400" />
-                           <span className="text-xs font-semibold uppercase tracking-wide">{gamifiedStats.stats.streak} DAY STREAK ACTIVE</span>
+                           <span className="text-xs font-semibold uppercase tracking-wide">{gamifiedStats?.stats?.streak || 0} DAY STREAK ACTIVE</span>
                         </div>
                      </div>
                      <div className="absolute top-[-10%] right-[-10%] opacity-10 group-hover:rotate-12 transition-transform duration-1000"><Zap size={240} className="fill-current" /></div>
@@ -1321,14 +1321,14 @@ const StudentDashboard = () => {
                   <div className="md:col-span-2 grid grid-cols-2 gap-6">
                      <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[3rem] p-8 flex flex-col justify-center">
                         <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Total Learning Time</div>
-                        <div className="text-4xl font-semibold text-gray-900 dark:text-white tabular-nums">{gamifiedStats.stats.learningTime} <span className="text-sm font-bold text-gray-500">MINS</span></div>
+                        <div className="text-4xl font-semibold text-gray-900 dark:text-white tabular-nums">{gamifiedStats?.stats?.learningTime || 0} <span className="text-sm font-bold text-gray-500">MINS</span></div>
                         <div className="mt-4 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                            <div className="h-full bg-primary-600 w-[65%]" />
                         </div>
                      </div>
                      <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[3rem] p-8 flex flex-col justify-center">
                         <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Badges Unlocked</div>
-                        <div className="text-4xl font-semibold text-gray-900 dark:text-white tabular-nums">{gamifiedStats.earned.length} <span className="text-sm font-bold text-gray-500">/{gamifiedStats.all.length}</span></div>
+                        <div className="text-4xl font-semibold text-gray-900 dark:text-white tabular-nums">{gamifiedStats?.earned?.length || 0} <span className="text-sm font-bold text-gray-500">/{gamifiedStats?.all?.length || 0}</span></div>
                         <div className="mt-4 flex gap-2">
                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -1343,14 +1343,14 @@ const StudentDashboard = () => {
                      Institutional Badge Catalog <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800" />
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
-                     {gamifiedStats.all.map(badge => {
-                        const isEarned = gamifiedStats.earned.some(b => b.badge._id === badge._id);
+                     {gamifiedStats?.all?.map(badge => {
+                        const isEarned = gamifiedStats?.earned?.some(b => b.badge?._id === badge._id || b.badge === badge._id);
                         return (
                           <div key={badge._id} className="flex flex-col items-center group">
                              <div className={`w-28 h-28 rounded-[2rem] p-1 transition-all duration-500 ${isEarned ? 'bg-gradient-to-tr from-primary-600 via-indigo-500 to-indigo-400 rotate-0 shadow-[0_20px_40px_rgba(79,70,229,0.3)]' : 'bg-gray-100 dark:bg-gray-800 border-dashed border-2 border-gray-300 dark:border-gray-700'}`}>
                                 <div className="w-full h-full bg-white dark:bg-[#0b0f1a] rounded-[1.8rem] flex items-center justify-center relative overflow-hidden group-hover:scale-95 transition-transform">
                                    {isEarned && <div className="absolute inset-0 bg-indigo-600/5 animate-pulse" />}
-                                   {badge.icon.startsWith('http') ? <img src={badge.icon} alt={badge.name} className="w-16 h-16 object-contain relative z-10" /> : <div className="text-4xl">{badge.icon}</div>}
+                                   {badge.icon && badge.icon.startsWith('http') ? <img src={badge.icon} alt={badge.name} className="w-16 h-16 object-contain relative z-10" /> : <div className="text-4xl">{badge.icon || '🏅'}</div>}
                                 </div>
                              </div>
                              <h4 className={`text-xs font-semibold uppercase tracking-tighter mt-6 text-center leading-tight ${isEarned ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>{badge.name}</h4>
