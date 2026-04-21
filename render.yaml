@@ -38,3 +38,7 @@ services:
           type: web
           name: scholarnode-api
           property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
