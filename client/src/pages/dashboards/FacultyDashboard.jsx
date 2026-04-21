@@ -10,7 +10,7 @@ import {
   Clock, MapPin, Tag, BookMarked, FlaskConical, Presentation,
   Microscope, Layers, GraduationCap, AlertCircle, CheckCircle2,
   Plus, CalendarDays, LayoutList, LayoutGrid,
-  ShieldCheck, FileCheck, Settings, Search, Megaphone, ClipboardCheck
+  ShieldCheck, FileCheck, Settings, Search, Megaphone, ClipboardCheck, Brain
 } from 'lucide-react';
 import DashboardOverview from '../../components/teacher/DashboardOverview';
 import AttendanceManager from '../../components/teacher/AttendanceManager';
