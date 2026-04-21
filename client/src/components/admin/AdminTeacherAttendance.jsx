@@ -20,7 +20,7 @@ const AdminTeacherAttendance = ({ user }) => {
     const fetchAttendance = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/teachers/attendance?date=${date}`, {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/attendance?date=${date}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setTeachers(res.data);

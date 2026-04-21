@@ -67,7 +67,7 @@ const AdminBatchFinalization = ({ user }) => {
   const fetchEligibleStudents = async () => {
     try {
       setFetchingStudents(true);
-      const { data } = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses/eligible-students?courseId=${selectedCourse._id}&academicYear=${academicYear}`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses/eligible-students?courseId=${selectedCourse._id}&academicYear=${academicYear}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setStudents(data.students);
@@ -104,7 +104,7 @@ const AdminBatchFinalization = ({ user }) => {
     if (!selectedCourse || selectedIds.length === 0) return;
     try {
         setLoading(true);
-        const { data } = await axios.post(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses/${selectedCourse._id}/finalize-batch`, {
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses/${selectedCourse._id}/finalize-batch`, {
             studentIds: selectedIds,
             academicYear: academicYear,
             semester: selectedCourse.semester

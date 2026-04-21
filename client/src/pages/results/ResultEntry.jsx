@@ -290,7 +290,7 @@ const ResultEntry = () => {
     }
 
     try {
-        const { data } = await axios.post(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/results/toggle-lock/${targetResultId}`, {}, { headers: { Authorization: `Bearer ${user.token}` } });
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/results/toggle-lock/${targetResultId}`, {}, { headers: { Authorization: `Bearer ${user.token}` } });
         setLocalResults(prev => prev.map(r => r._id === studentId ? { ...r, resultId: targetResultId, isLocked: data.isLocked } : r));
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 2000);

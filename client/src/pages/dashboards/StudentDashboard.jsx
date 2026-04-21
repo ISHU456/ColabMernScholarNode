@@ -99,7 +99,7 @@ const StudentDashboard = () => {
     const load = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/courses`, config);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses`, config);
         
         // Filter by selected semester and department
         const studentCourses = res.data.filter(c => 
@@ -119,7 +119,7 @@ const StudentDashboard = () => {
         await Promise.all(
           studentCourses.map(async (course) => {
             try {
-              const rRes = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/resources?courseId=${course.id}`);
+              const rRes = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/resources?courseId=${course.id}`);
               const resources = rRes.data || [];
               const totalLectures = resources.length;
               const totalVideos = resources.filter((r) => r.type === 'youtube' || r.type === 'yt').length;

@@ -26,7 +26,7 @@ const QuizArena = ({ quizId, onClose }) => {
     const fetchQuiz = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/gamification/quizzes/${quizId}`, config);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/gamification/quizzes/${quizId}`, config);
         setQuiz(res.data);
         setTimeLeft(res.data.timeLimit * 60);
         setIsLoading(false);

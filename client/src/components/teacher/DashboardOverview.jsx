@@ -70,7 +70,7 @@ const DashboardOverview = ({ user }) => {
     setIsStudentsLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/courses/${courseCode}/students`, config);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses/${courseCode}/students`, config);
       setActiveCourseStudents(res.data);
     } catch (error) {
       console.error('Error fetching course students:', error);

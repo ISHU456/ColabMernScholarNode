@@ -31,7 +31,7 @@ const AdminPendingTeachers = ({ user }) => {
     const handleAuthorize = async (id) => {
         try {
             setAuthorizing(id);
-            await axios.post(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/teachers/pending/${id}/authorize`, {}, {
+            await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/teachers/pending/${id}/authorize`, {}, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             // Remove from list

@@ -88,7 +88,7 @@ const AdminCourseManagement = ({ user }) => {
     e.preventDefault();
     try {
       if (editingCourse) {
-        await axios.put(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses/${editingCourse._id}`, formData, {
+        await axios.put(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses/${editingCourse._id}`, formData, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         showNotification('success', 'Course architecture synchronized successfully.');
@@ -108,7 +108,7 @@ const AdminCourseManagement = ({ user }) => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to eliminate this course from the system?')) return;
     try {
-      await axios.delete(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       showNotification('success', 'Course purged from central database.');

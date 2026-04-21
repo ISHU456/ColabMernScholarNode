@@ -239,7 +239,7 @@ const AIMode = () => {
   const deleteSession = async (sessionId) => {
     if (!window.confirm("Terminate this neural log indefinitely?")) return;
     try {
-      await axios.delete(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/delete/${sessionId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/delete/${sessionId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setChatHistory(prev => prev.filter(s => s.sessionId !== sessionId));
@@ -253,7 +253,7 @@ const AIMode = () => {
     const amount = document.getElementById('creditAmountInp').value || 10;
     if (!email) return;
     try {
-      await axios.post(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/grant-by-email`, { email, amount }, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/grant-by-email`, { email, amount }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert(`Credits synchronized for ${email}: Added ${amount} focus bits.`);

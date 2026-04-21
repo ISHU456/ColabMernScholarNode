@@ -55,7 +55,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         e.stopPropagation();
         if (!window.confirm('Permanently eradicate this assignment and all its submissions?')) return;
         try {
-            await axios.delete(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/assignments/${asgnId}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/${asgnId}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             if (selectedAssignment?._id === asgnId) setSelectedAssignment(null);
@@ -353,7 +353,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
 
     const handleGradeSubmission = async (subId) => {
         try {
-            await axios.put(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/assignments/grade/${subId}`, {
+            await axios.put(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/grade/${subId}`, {
                 marks: gradingData.marks,
                 feedback: gradingData.feedback,
                 teacherId: user._id

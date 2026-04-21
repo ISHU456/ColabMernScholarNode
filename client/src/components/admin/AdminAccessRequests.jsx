@@ -26,7 +26,7 @@ const AdminAccessRequests = ({ user }) => {
 
   const handleResolve = async (id, status) => {
     try {
-      await axios.post(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/access-requests/resolve/${id}`, { status }, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/access-requests/resolve/${id}`, { status }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setRequests(prev => prev.filter(r => r._id !== id));

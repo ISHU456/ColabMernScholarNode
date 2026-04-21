@@ -34,7 +34,7 @@ const InstitutionalAlert = () => {
 
   const dismissPopup = async (id) => {
     try {
-      await axios.put(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/notifications/${id}/dismiss-popup`, {}, {
+      await axios.put(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications/${id}/dismiss-popup`, {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setActivePopup(null);

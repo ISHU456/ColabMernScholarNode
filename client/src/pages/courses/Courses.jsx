@@ -72,7 +72,7 @@ const Courses = () => {
         setLoading(true);
         const deptId = selectedDept?._id;
         const [coursesRes, deptsRes] = await Promise.all([
-          axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/courses`, {
+          axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses`, {
             params: { departmentId: deptId, semester: activeSem === 'All' ? undefined : activeSem.split('-')[1] },
             headers: { Authorization: `Bearer ${user.token}` }
           }),
@@ -97,7 +97,7 @@ const Courses = () => {
       const counts = {};
       for (const course of courses) {
         try {
-          const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/auth/course-activity/${course.code}`);
+          const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/course-activity/${course.code}`);
           counts[course.code] = res.data.onlineCount;
         } catch (err) { counts[course.code] = 0; }
       }
@@ -177,7 +177,7 @@ const Courses = () => {
       });
       alert('New academic module established.');
       setShowModal(false);
-      const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/courses`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/courses`, {
         params: { departmentId: selectedDept?._id, semester: activeSem === 'All' ? undefined : activeSem.split('-')[1] },
         headers: { Authorization: `Bearer ${user.token}` }
       });

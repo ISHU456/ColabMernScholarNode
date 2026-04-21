@@ -41,7 +41,7 @@ const AdminResultHub = ({ user }) => {
   const fetchSummary = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/results/semester-summary?semester=${semester}&academicYear=${academicYear}&department=${department}&section=${section}`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/results/semester-summary?semester=${semester}&academicYear=${academicYear}&department=${department}&section=${section}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setData(data);
