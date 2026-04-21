@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateProfile } from './features/auth/authSlice';
 import axios from 'axios';
 
 // Layout
@@ -119,6 +120,7 @@ const ProtectedRoute = ({ children, allowedRoles, checkDept = true }) => {
 // Wrapper for Footer visibility logic
 const AppContent = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const isAIMode = location.pathname === '/ai-mode';
   const { user } = useSelector((state) => state.auth);
 
