@@ -135,8 +135,39 @@ io.on('connection', (socket) => {
     });
   });
 
+  // WebRTC Signaling for Live Classes (Broadcast Mode)
+  socket.on('start-broadcast', (roomId) => {
+    socket.broadcast.to(roomId).emit('broadcaster-ready', socket.id);
+  });
+
+  socket.on('join-broadcast', (roomId) => {
+    socket.to(roomId).emit('new-viewer', socket.id);
+  });
+
+  socket.on('offer', (toEmail, offer) => {
+    socket.to(toEmail).emit('offer', socket.id, offer);
+  });
+
+  socket.on('answer', (toEmail, answer) => {
+    socket.to(toEmail).emit('answer', socket.id, answer);
+  });
+
+  socket.on('ice-candidate', (toEmail, candidate) => {
+    socket.to(toEmail).emit('ice-candidate', socket.id, candidate);
+  });
+
+  // Live Chat / Comments
+  socket.on('send-message', (roomId, messageData) => {
+    io.to(roomId).emit('new-message', messageData);
+  });
+
+  // Raise Hand Feature
+  socket.on('raise-hand', (roomId, userData) => {
+    socket.to(roomId).emit('student-raised-hand', userData);
+  });
+
   socket.on('disconnect', () => {
-    // console.log('Client disconnected');
+    // Notify room of disconnection if needed
   });
 });
 

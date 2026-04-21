@@ -868,7 +868,7 @@ const CourseDetail = () => {
   );
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] dark:bg-[#030712] overflow-hidden font-sans relative">
+    <div className="flex h-[100dvh] bg-[#f8fafc] dark:bg-[#030712] overflow-hidden font-sans relative">
       <AnimatePresence>
         {sidebarOpen && windowWidth < 1024 && (
           <motion.div
@@ -917,7 +917,7 @@ const CourseDetail = () => {
           onStartLive={() => handleStartLive(courseId)}
         />
 
-        <div className={`flex-1 flex flex-col min-h-0 overflow-hidden transition-all duration-500 ${activeSection === 'ai-assistant' ? 'p-0 pb-0' : 'p-3 md:p-8'}`}>
+        <div className={`flex-1 flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden transition-all duration-500 ${activeSection === 'ai-assistant' ? 'p-0 pb-0' : 'p-3 md:p-8'}`}>
           <AnimatePresence mode="wait">
             {activeSection === 'ai-assistant' ? (
               <motion.div
