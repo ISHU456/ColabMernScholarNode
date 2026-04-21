@@ -98,7 +98,10 @@ const AIMode = () => {
       const res = await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/ask`, {
         message: input,
         sessionId: sessionId,
-        history: messages.map(m => ({ role: m.sender === 'bot' ? 'model' : 'user', parts: [{ text: m.text }] }))
+        history: messages.map(m => ({ 
+          role: m.sender === 'bot' ? 'assistant' : 'user', 
+          content: m.text 
+        }))
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
@@ -121,7 +124,7 @@ const AIMode = () => {
       }
       const errorMsg = { 
         id: Date.now() + 1, 
-        text: "Neural Link interrupted. Please check credits or connection.", 
+        text: err.response?.data?.response || "Neural Link interrupted. Please check credits or connection.", 
         sender: 'bot', 
         timestamp: new Date() 
       };
