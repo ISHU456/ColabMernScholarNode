@@ -33,6 +33,7 @@ const LiveClass = () => {
   const remoteVideoRef = useRef();
   const streamRef = useRef(); // Use Ref for stream to avoid closure issues
   const peerConnections = useRef({}); // Object to store all RTC connections
+  const pendingCandidates = useRef({}); // Queue for ICE candidates before description is set
   const chatEndRef = useRef();
 
   const iceServers = {
@@ -122,6 +123,10 @@ const LiveClass = () => {
   };
 
   const createPeerConnection = async (viewerId, isOffer) => {
+    if (peerConnections.current[viewerId]) {
+      peerConnections.current[viewerId].close();
+    }
+
     const pc = new RTCPeerConnection(iceServers);
     peerConnections.current[viewerId] = pc;
 
@@ -141,14 +146,34 @@ const LiveClass = () => {
       await pc.setLocalDescription(offer);
       socketRef.current.emit('offer', viewerId, offer);
     }
+    
+    return pc;
+  };
+
+  const processQueuedCandidates = async (id, pc) => {
+    const queue = pendingCandidates.current[id];
+    if (queue) {
+      while (queue.length) {
+        const cand = queue.shift();
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(cand));
+        } catch (e) { console.error("Error adding queued candidate", e); }
+      }
+    }
   };
 
   const handleOffer = async (senderId, offer) => {
+    if (peerConnections.current[senderId]) {
+      peerConnections.current[senderId].close();
+    }
+
     const pc = new RTCPeerConnection(iceServers);
     peerConnections.current[senderId] = pc;
 
     pc.ontrack = (event) => {
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
     };
 
     pc.onicecandidate = (event) => {
@@ -157,23 +182,38 @@ const LiveClass = () => {
       }
     };
 
-    await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    socketRef.current.emit('answer', senderId, answer);
+    try {
+      await pc.setRemoteDescription(new RTCSessionDescription(offer));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socketRef.current.emit('answer', senderId, answer);
+      
+      // Process any candidates that arrived early
+      await processQueuedCandidates(senderId, pc);
+    } catch (e) {
+      console.error("Failed to handle offer", e);
+    }
   };
 
   const handleAnswer = async (senderId, answer) => {
     const pc = peerConnections.current[senderId];
     if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        await processQueuedCandidates(senderId, pc);
+      } catch (e) { console.error("Error setting answer", e); }
     }
   };
 
   const handleIceCandidate = async (senderId, candidate) => {
     const pc = peerConnections.current[senderId];
-    if (pc) {
-      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (e) { console.error("Error adding candidate", e); }
+    } else {
+      if (!pendingCandidates.current[senderId]) pendingCandidates.current[senderId] = [];
+      pendingCandidates.current[senderId].push(candidate);
     }
   };
 
