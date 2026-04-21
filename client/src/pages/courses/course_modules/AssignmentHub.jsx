@@ -37,7 +37,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         if (!newAssignment.title) return alert("Please specify a Protocol Title first for Neural Mapping.");
         setIsGeneratingQuiz(true);
         try {
-            const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/generate-quiz', {
+            const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/generate-quiz', {
                 topic: newAssignment.title,
                 count: 5
             }, {
@@ -87,7 +87,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         if (pdfFile) formData.append('file', pdfFile);
 
         try {
-            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/assignments/create', formData, {
+            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/create', formData, {
                 headers: { 
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'multipart/form-data'
@@ -379,7 +379,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         if (selectedAssignment.type === 'quiz') formData.append('quizAnswers', JSON.stringify(quizAnswers));
 
         try {
-            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/assignments/submit', formData, {
+            await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/assignments/submit', formData, {
                 headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' }
             });
             alert("Neural Submission Successful.");

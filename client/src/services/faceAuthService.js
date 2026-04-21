@@ -1,4 +1,4 @@
-const API_URL = '' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/auth';
+const API_URL = '' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth';
 
 /**
  * Service for face authentication API calls

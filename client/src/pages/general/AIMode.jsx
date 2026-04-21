@@ -57,7 +57,7 @@ const AIMode = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/auth/profile', {
+      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/auth/profile', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setCredits(res.data.credits);
@@ -76,7 +76,7 @@ const AIMode = () => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/history', {
+      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/history', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setChatHistory(res.data);
@@ -95,7 +95,7 @@ const AIMode = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/ask', {
+      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/ask', {
         message: input,
         sessionId: sessionId,
         history: messages.map(m => ({ role: m.sender === 'bot' ? 'model' : 'user', parts: [{ text: m.text }] }))
@@ -149,7 +149,7 @@ const AIMode = () => {
     formData.append('file', file);
 
     try {
-      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/analyze', formData, {
+      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/analyze', formData, {
         headers: { 
           Authorization: `Bearer ${user.token}`,
           'Content-Type': 'multipart/form-data'
@@ -210,7 +210,7 @@ const AIMode = () => {
 
   const requestCredits = async () => {
     try {
-      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/request-credits', {}, {
+      await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/request-credits', {}, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setRequestSent(true);

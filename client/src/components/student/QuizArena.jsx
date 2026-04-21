@@ -71,7 +71,7 @@ const QuizArena = ({ quizId, onClose }) => {
 
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/gamification/quizzes/submit', {
+      const res = await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/gamification/quizzes/submit', {
         quizId,
         score: Math.round(score),
         timeTaken,

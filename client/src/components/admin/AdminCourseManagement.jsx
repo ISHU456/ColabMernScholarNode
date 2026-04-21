@@ -37,10 +37,10 @@ const AdminCourseManagement = ({ user }) => {
     try {
       setLoading(true);
       const [coursesRes, deptsRes] = await Promise.all([
-        axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses', {
+        axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses', {
           headers: { Authorization: `Bearer ${user.token}` }
         }),
-        axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/departments')
+        axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/departments')
       ]);
       setCourses(coursesRes.data);
       setDepartments(deptsRes.data);
@@ -93,7 +93,7 @@ const AdminCourseManagement = ({ user }) => {
         });
         showNotification('success', 'Course architecture synchronized successfully.');
       } else {
-        await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/courses', formData, {
+        await axios.post('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/courses', formData, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         showNotification('success', 'New academic module established.');

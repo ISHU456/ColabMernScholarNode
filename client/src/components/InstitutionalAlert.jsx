@@ -13,7 +13,7 @@ const InstitutionalAlert = () => {
     if (!user?.token) return;
     const fetchAlerts = async () => {
       try {
-        const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/notifications', {
+        const { data } = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications', {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         

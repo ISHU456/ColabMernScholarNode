@@ -56,7 +56,7 @@ const AdminDashboard = () => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/admin/stats', {
+      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/admin/stats', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setStats(res.data);

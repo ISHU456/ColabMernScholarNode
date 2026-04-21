@@ -22,7 +22,7 @@ const AdminAiManagement = () => {
 
   const fetchUsage = async () => {
     try {
-      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/chatbot/usage-summary', {
+      const res = await axios.get('' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + ${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/chatbot/usage-summary', {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setUsers(res.data);
