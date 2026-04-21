@@ -18,12 +18,13 @@ const SidebarNav = ({
   isSidebarDragging,
   startSidebarResizing,
   isUploaderHub = false,
-  courseId
+  courseId,
+  windowWidth
 }) => {
   return (
     <aside 
-      style={{ width: window.innerWidth < 1024 ? '280px' : (sidebarOpen ? sidebarWidth : 80) }}
-      className={`fixed lg:relative inset-y-0 left-0 bg-white dark:bg-[#0b0f19] border-r border-gray-100 dark:border-gray-800 flex flex-col shrink-0 z-[101] relative shadow-2xl transition-all duration-300 ${!sidebarOpen && 'w-20'} ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+      style={{ width: windowWidth < 1024 ? '280px' : (sidebarOpen ? sidebarWidth : 80) }}
+      className={`fixed lg:relative inset-y-0 left-0 bg-white dark:bg-[#0b0f19] border-r border-gray-100 dark:border-gray-800 flex flex-col shrink-0 z-[101] shadow-2xl transition-all duration-300 ${!sidebarOpen && 'w-20'} ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
     >
       {/* Resize Handle (The Slider) */}
       {/* Resize Handle (The Slider) */}

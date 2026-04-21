@@ -900,6 +900,7 @@ const CourseDetail = () => {
           isSidebarResizing.current = true;
           setIsSidebarDragging(true);
         }}
+        windowWidth={windowWidth}
       />
 
       <main className="flex-1 flex flex-col min-w-0 min-h-0 relative">
