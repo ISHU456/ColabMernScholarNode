@@ -39,8 +39,8 @@ const AchievementToaster = () => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 3500);
     };
-    window.addEventListener('smartlms:achievement', handler);
-    return () => window.removeEventListener('smartlms:achievement', handler);
+    window.addEventListener('scholarmatrix:achievement', handler);
+    return () => window.removeEventListener('scholarmatrix:achievement', handler);
   }, []);
 
   const rendered = useMemo(() => {

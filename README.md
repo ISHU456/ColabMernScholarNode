@@ -1,6 +1,6 @@
-# ScholarNode - Next-Gen Secure Learning Ecosystem
+# ScholarMatrix - Next-Gen Secure Learning Ecosystem
 
-ScholarNode is a high-performance, full-stack Learning Management System (LMS) built with the MERN stack. It prioritizes advanced security through biometric authentication and geofencing, while engaging users through a robust gamification engine.
+ScholarMatrix is a high-performance, full-stack Learning Management System (LMS) built with the MERN stack. It prioritizes advanced security through biometric authentication and geofencing, while engaging users through a robust gamification engine.
 
 ---
 
@@ -36,7 +36,7 @@ ScholarNode is a high-performance, full-stack Learning Management System (LMS) b
 Clone the repository and install dependencies from the root:
 ```bash
 git clone https://github.com/ISHU456/LMS.git
-cd ScholarNode
+cd ScholarMatrix
 npm install
 ```
 
@@ -76,4 +76,4 @@ docker-compose up --build
 
 ---
 
-> *ScholarNode was designed to bridge the gap between education and high-tier security protocols.*
+> *ScholarMatrix was designed to bridge the gap between education and high-tier security protocols.*

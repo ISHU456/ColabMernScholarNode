@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://scholarmatrix-api.onrender.com';
 
 const LiveClass = () => {
   const { classId } = useParams();
