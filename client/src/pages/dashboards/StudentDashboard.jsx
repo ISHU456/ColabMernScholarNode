@@ -19,6 +19,7 @@ import {
   FileText,
   LayoutDashboard,
   Users,
+  Zap,
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
