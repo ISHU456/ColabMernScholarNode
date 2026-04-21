@@ -29,8 +29,8 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
         const fetchData = async () => {
             try {
                 const endpoint = (user.role === 'admin' || user.role === 'hod') 
-                    ? `http://localhost:5001/api/admin/students/${studentId}`
-                    : `http://localhost:5001/api/auth/student-profile/${studentId}`;
+                    ? `' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/admin/students/${studentId}`
+                    : `' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/auth/student-profile/${studentId}`;
 
                 const res = await axios.get(endpoint, {
                     headers: { Authorization: `Bearer ${user.token}` }
@@ -67,7 +67,7 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await axios.put(`http://localhost:5001/api/admin/students/${studentId}/enrollment`, {
+            await axios.put(`' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/admin/students/${studentId}/enrollment`, {
                 semester,
                 department,
                 section,

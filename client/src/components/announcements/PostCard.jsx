@@ -11,9 +11,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { io } from 'socket.io-client';
 import CommentItem from './CommentItem';
 
-const socket = io('http://localhost:5001');
+const socket = io('' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '');
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = '' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api';
 
 const PostCard = ({ announcement, user, onUpdate, onDelete }) => {
   const [reactions, setReactions] = useState(announcement.reactionsCount || {

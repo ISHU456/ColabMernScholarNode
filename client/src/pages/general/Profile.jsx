@@ -62,7 +62,7 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5001/api/auth/profile', {
+      const res = await fetch('' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const Profile = () => {
   const RequestDeactivation = async () => {
     if(window.confirm("Are you sure you want to request account deactivation?")) {
       try {
-        await fetch('http://localhost:5001/api/auth/profile', {
+        await fetch('' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/auth/profile', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
           body: JSON.stringify({ deactivationRequested: true })

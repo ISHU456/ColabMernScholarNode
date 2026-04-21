@@ -57,7 +57,7 @@ const QuizGenerator = ({ onClose, onSave }) => {
     setIsLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post('http://localhost:5001/api/gamification/quizzes', quizForm, config);
+      await axios.post('' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/gamification/quizzes', quizForm, config);
       alert("Neural Quiz Node Deployed!");
       if (onSave) onSave();
       if (onClose) onClose();

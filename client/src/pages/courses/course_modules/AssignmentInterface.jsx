@@ -23,7 +23,7 @@ const AssignmentInterface = ({ assignment, user, isTeacher, onBack, fetchAssignm
 
     const fetchSubmissions = async () => {
         try {
-            const res = await axios.get(`http://localhost:5001/api/assignments/submissions/${assignment._id}`, {
+            const res = await axios.get(`' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/assignments/submissions/${assignment._id}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setSubmissions(res.data);
@@ -116,7 +116,7 @@ const AssignmentInterface = ({ assignment, user, isTeacher, onBack, fetchAssignm
         if (submissionFile) formData.append('files', submissionFile);
 
         try {
-            await axios.post('http://localhost:5001/api/assignments/submit', formData, {
+            await axios.post('' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/assignments/submit', formData, {
                 headers: { 
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'multipart/form-data'
@@ -137,7 +137,7 @@ const AssignmentInterface = ({ assignment, user, isTeacher, onBack, fetchAssignm
         const feedback = gradingData[subId]?.feedback !== undefined ? gradingData[subId].feedback : (sub.facultyFeedback ?? "");
 
         try {
-            await axios.put(`http://localhost:5001/api/assignments/grade/${subId}`, {
+            await axios.put(`' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/assignments/grade/${subId}`, {
                 marks,
                 feedback,
                 teacherId: user._id
@@ -155,7 +155,7 @@ const AssignmentInterface = ({ assignment, user, isTeacher, onBack, fetchAssignm
     const handleDeleteSubmission = async (subId) => {
         if (!window.confirm("WARNING: Irreversible Action. Eradicate this neural submission?")) return;
         try {
-            await axios.delete(`http://localhost:5001/api/assignments/submissions/${subId}`, {
+            await axios.delete(`' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/assignments/submissions/${subId}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             fetchSubmissions();
