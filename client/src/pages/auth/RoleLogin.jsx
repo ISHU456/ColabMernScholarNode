@@ -35,7 +35,7 @@ const RoleLogin = () => {
     const fetchRoll = async () => {
         if (formData.role === 'student' && formData.department && view === 'register') {
             try {
-                const { data } = await axios.get(`' + (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/auth/next-roll-number?dept=${formData.department}`);
+                const { data } = await axios.get(`' + (import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com') + '/api/auth/next-roll-number?dept=${formData.department}`);
                 setFormData(prev => ({ ...prev, rollNumber: data.rollNumber }));
             } catch (err) {
                 console.error("Roll number generation failure");
