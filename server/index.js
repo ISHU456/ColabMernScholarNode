@@ -60,18 +60,25 @@ connectDB().then(async () => {
 
 const app = express();
 const httpServer = createServer(app);
-const frontendUrl = process.env.FRONTEND_URL || 'https://colabmernscholarnode-client.onrender.com';
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://colabmernscholarnode-client.onrender.com'
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
 
 const io = new Server(httpServer, {
   cors: {
-    origin: frontendUrl,
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true
   },
 });
 
 app.use(cors({
-  origin: frontendUrl,
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json({ limit: '100mb' }));
