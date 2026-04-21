@@ -27,6 +27,7 @@ const LiveClass = () => {
   const [handsRaisedList, setHandsRaisedList] = useState([]);
   const [viewerCount, setViewerCount] = useState(0);
   const [activeTab, setActiveTab] = useState('chat'); // chat | members
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   
   const socketRef = useRef();
   const localVideoRef = useRef();
@@ -383,95 +384,118 @@ const LiveClass = () => {
               )}
 
               <button 
-                onClick={handleLeave} 
-                className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3"
-              >
-                <PhoneOff size={16} /> END SESSION
-              </button>
+                 onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isSidebarVisible ? 'bg-primary-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-white/10 hover:bg-white/20'}`}
+                 title={isSidebarVisible ? "Enter Full Mode" : "Open Interactions"}
+               >
+                 <MessageSquare size={20} />
+               </button>
+
+               <div className="w-px h-8 bg-white/10 mx-2" />
+
+               <button 
+                 onClick={handleLeave} 
+                 className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3"
+               >
+                 <PhoneOff size={16} /> END SESSION
+               </button>
            </div>
         </div>
       </div>
 
       {/* --- Sidebar (Chat & Interactions) --- */}
-      <div className="w-full lg:w-[450px] shrink-0 bg-[#0b0f19] border-l border-gray-800 flex flex-col relative z-20 overflow-hidden">
-        <header className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0d111c]/80 backdrop-blur-xl">
-           <div className="flex items-center gap-3">
-              <MessageSquare size={18} className="text-primary-500" />
-              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-300">Class interaction hub</h2>
-           </div>
-           <div className="flex bg-gray-900/50 p-1 rounded-xl border border-gray-800">
-              <button 
-                onClick={() => setActiveTab('chat')}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'chat' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
-              >
-                Chat
-              </button>
-              <button 
-                onClick={() => setActiveTab('members')}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'members' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
-              >
-                Members
-              </button>
-           </div>
-        </header>
-
-        {activeTab === 'chat' ? (
-          <>
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar scroll-smooth">
-              {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-center p-10 opacity-20">
-                   <Sparkles size={48} className="mb-4" />
-                   <p className="text-xs font-bold uppercase tracking-widest">Protocol initiated.<br/>Waiting for session discourse.</p>
-                </div>
-              )}
-              
-              <AnimatePresence initial={false}>
-                {messages.map((msg) => (
-                  <motion.div 
-                    key={msg.id} 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    className={`flex flex-col ${msg.sender === user.name ? 'items-end' : 'items-start'}`}
+      <AnimatePresence>
+        {isSidebarVisible && (
+          <motion.div 
+            initial={{ x: 450, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 450, opacity: 0 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="w-full lg:w-[450px] shrink-0 bg-[#0b0f19] border-l border-gray-800 flex flex-col relative z-20 overflow-hidden"
+          >
+            <header className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#0d111c]/80 backdrop-blur-xl">
+               <div className="flex items-center gap-3">
+                  <MessageSquare size={18} className="text-primary-500" />
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-300">Class interaction hub</h2>
+               </div>
+               <div className="flex bg-gray-900/50 p-1 rounded-xl border border-gray-800">
+                  <button 
+                    onClick={() => setActiveTab('chat')}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'chat' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                       <span className="text-[10px] font-bold text-gray-500 uppercase">{msg.sender}</span>
-                       <span className="text-[8px] font-bold text-gray-700">{msg.time}</span>
-                    </div>
-                    <div className={`px-4 py-2.5 rounded-2xl text-xs font-medium max-w-[85%] leading-relaxed ${msg.sender === user.name ? 'bg-primary-600 text-white rounded-tr-none shadow-lg shadow-primary-900/20' : 'bg-gray-800 text-gray-200 rounded-tl-none border border-gray-700'}`}>
-                      {msg.text}
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              <div ref={chatEndRef} />
-            </div>
+                    Chat
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('members')}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'members' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+                  >
+                    Members
+                  </button>
+               </div>
+               <button onClick={() => setIsSidebarVisible(false)} className="lg:hidden p-2 text-gray-400 hover:text-white">
+                  <X size={20} />
+               </button>
+            </header>
 
-            <form onSubmit={sendMessage} className="p-6 bg-[#0d111c] border-t border-gray-800 flex items-center gap-4">
-              <input 
-                type="text" 
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Submit observation..." 
-                className="flex-1 h-12 bg-gray-900/50 border border-gray-800 rounded-2xl px-5 text-sm outline-none focus:border-primary-500 transition-all font-medium"
-              />
-              <button 
-                type="submit"
-                className="w-12 h-12 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-95"
-              >
-                <Send size={18} />
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="flex-1 p-6 flex flex-col items-center justify-center text-center opacity-40">
-             <Users size={48} className="mb-4 text-gray-600" />
-             <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Live Member Tracking<br/>Engaged</p>
-             <div className="mt-8 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                <span className="text-[10px] font-bold text-emerald-500 uppercase">{viewerCount} Active Terminals</span>
-             </div>
-          </div>
+            {activeTab === 'chat' ? (
+              <>
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar scroll-smooth">
+                  {messages.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-full text-center p-10 opacity-20">
+                       <Sparkles size={48} className="mb-4" />
+                       <p className="text-xs font-bold uppercase tracking-widest">Protocol initiated.<br/>Waiting for session discourse.</p>
+                    </div>
+                  )}
+                  
+                  <AnimatePresence initial={false}>
+                    {messages.map((msg) => (
+                      <motion.div 
+                        key={msg.id} 
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        className={`flex flex-col ${msg.sender === user.name ? 'items-end' : 'items-start'}`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                           <span className="text-[10px] font-bold text-gray-500 uppercase">{msg.sender}</span>
+                           <span className="text-[8px] font-bold text-gray-700">{msg.time}</span>
+                        </div>
+                        <div className={`px-4 py-2.5 rounded-2xl text-xs font-medium max-w-[85%] leading-relaxed ${msg.sender === user.name ? 'bg-primary-600 text-white rounded-tr-none shadow-lg shadow-primary-900/20' : 'bg-gray-800 text-gray-200 rounded-tl-none border border-gray-700'}`}>
+                          {msg.text}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  <div ref={chatEndRef} />
+                </div>
+
+                <form onSubmit={sendMessage} className="p-6 bg-[#0d111c] border-t border-gray-800 flex items-center gap-4">
+                  <input 
+                    type="text" 
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Submit observation..." 
+                    className="flex-1 h-12 bg-gray-900/50 border border-gray-800 rounded-2xl px-5 text-sm outline-none focus:border-primary-500 transition-all font-medium"
+                  />
+                  <button 
+                    type="submit"
+                    className="w-12 h-12 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-95"
+                  >
+                    <Send size={18} />
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="flex-1 p-6 flex flex-col items-center justify-center text-center opacity-40">
+                 <Users size={48} className="mb-4 text-gray-600" />
+                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Live Member Tracking<br/>Engaged</p>
+                 <div className="mt-8 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                    <span className="text-[10px] font-bold text-emerald-500 uppercase">{viewerCount} Active Terminals</span>
+                 </div>
+              </div>
+            )}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
     </div>
   );
