@@ -122,6 +122,8 @@ app.get('/api/public/settings', async (req, res) => {
     }
 });
 
+const roomMembers = {}; // roomId -> Array of { socketId, userId, name, role }
+
 // Socket.io for Real-time features
 io.on('connection', (socket) => {
   // console.log('New client connected', socket.id);
