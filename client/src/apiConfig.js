@@ -3,8 +3,8 @@
 
 const API_URL = import.meta.env.VITE_API_URL || 
   (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-    ? 'https://scholarmatrixdeploymentserver.onrender.com' 
-    : 'https://scholarmatrixdeploymentserver.onrender.com');
+    ? 'https://scholarmatrixdeployment-server.onrender.com' 
+    : 'https://scholarmatrixdeployment-server.onrender.com');
 
 export default API_URL;
 

@@ -64,7 +64,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://scholarmatrixdeployment-client.onrender.com',
   'https://colabmernscholarnode-client.onrender.com',
-  'https://scholarmatrixdeploymentserver.onrender.com',
+  'https://scholarmatrixdeployment-server.onrender.com',
   'https://colabmernscholarnodeserver.onrender.com'
 ];
 
