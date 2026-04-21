@@ -31,6 +31,7 @@ const LiveClass = () => {
   const socketRef = useRef();
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
+  const streamRef = useRef(); // Use Ref for stream to avoid closure issues
   const peerConnections = useRef({}); // Object to store all RTC connections
   const chatEndRef = useRef();
 
@@ -110,6 +111,7 @@ const LiveClass = () => {
         video: true,
         audio: true
       });
+      streamRef.current = localStream;
       setStream(localStream);
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
       socketRef.current.emit('start-broadcast', classId);
@@ -123,8 +125,9 @@ const LiveClass = () => {
     const pc = new RTCPeerConnection(iceServers);
     peerConnections.current[viewerId] = pc;
 
-    if (stream) {
-      stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    const currentStream = streamRef.current;
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => pc.addTrack(track, currentStream));
     }
 
     pc.onicecandidate = (event) => {
@@ -420,28 +423,11 @@ const LiveClass = () => {
             </form>
           </>
         ) : (
-          <div className="flex-1 p-6 space-y-4">
-             <div className="flex items-center justify-between p-4 bg-gray-900/30 border border-gray-800 rounded-2xl">
-                <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center text-white font-bold text-xs">BT</div>
-                   <div>
-                      <p className="text-xs font-bold uppercase tracking-tight">Main Broadcaster</p>
-                      <p className="text-[10px] text-emerald-500 font-bold uppercase">Active Stream</p>
-                   </div>
-                </div>
-                <Radio size={16} className="text-emerald-500 animate-pulse" />
-             </div>
-             <div className="pt-4 border-t border-gray-800">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">Viewers ({viewerCount})</p>
-                <div className="space-y-3">
-                   {/* Placeholder for actual member list mapping */}
-                   {[1,2,3].map(i => (
-                      <div key={i} className="flex items-center gap-3 opacity-60">
-                         <div className="w-8 h-8 rounded-lg bg-gray-800 border border-gray-700" />
-                         <span className="text-[10px] font-bold uppercase text-gray-400 italic">Encrypted Connection #{i}</span>
-                      </div>
-                   ))}
-                </div>
+          <div className="flex-1 p-6 flex flex-col items-center justify-center text-center opacity-40">
+             <Users size={48} className="mb-4 text-gray-600" />
+             <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Live Member Tracking<br/>Engaged</p>
+             <div className="mt-8 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                <span className="text-[10px] font-bold text-emerald-500 uppercase">{viewerCount} Active Terminals</span>
              </div>
           </div>
         )}
