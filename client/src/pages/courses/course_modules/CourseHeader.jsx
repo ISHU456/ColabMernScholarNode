@@ -62,12 +62,21 @@ const CourseHeader = ({
          <Link to="/community" className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl lg:rounded-2xl hover:bg-primary-600 hover:text-white transition-all shadow-xl">
             <Megaphone size={18}/>
          </Link>
-         {canManage && (
+         {canManage ? (
            <button 
              onClick={onStartLive}
-             className="flex items-center justify-center gap-2 rounded-xl lg:rounded-2xl bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white px-3 lg:px-4 py-2 lg:py-3 font-semibold text-xs lg:text-xs uppercase tracking-wide transition-all h-10 lg:h-12"
+             className="flex items-center justify-center gap-2 rounded-xl lg:rounded-2xl bg-rose-600/10 text-rose-600 hover:bg-rose-600 hover:text-white px-3 lg:px-4 py-2 lg:py-3 font-semibold text-xs lg:text-xs uppercase tracking-wide transition-all h-10 lg:h-12 group"
            >
-             <Radio size={14} /> <span className="hidden md:block">Deploy Live</span>
+             <Radio size={14} className="group-hover:animate-pulse" /> 
+             <span className="hidden md:block">Deploy Live</span>
+           </button>
+         ) : (
+           <button 
+             onClick={onStartLive}
+             className="flex items-center justify-center gap-2 rounded-xl lg:rounded-2xl bg-emerald-600/10 text-emerald-600 hover:bg-emerald-600 hover:text-white px-3 lg:px-5 py-2 lg:py-3 font-semibold text-xs lg:text-xs uppercase tracking-wide transition-all h-10 lg:h-12 shadow-sm"
+           >
+             <Radio size={14} className="animate-pulse" /> 
+             <span>Join Class</span>
            </button>
          )}
       </div>

@@ -257,13 +257,14 @@ const CourseDetail = () => {
   }, [courseId, user?._id]);
 
   const handleStartLive = async (cId) => {
-    try {
-      // Trigger notification first
-      await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications/broadcast-live`, { courseId: cId }, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-    } catch (err) {
-      console.error('Failed to notify students about live class', err);
+    if (isUserTeacher) {
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL || 'https://colabmernscholarnodeserver.onrender.com'}/api/notifications/broadcast-live`, { courseId: cId }, {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+      } catch (err) {
+        console.error('Failed to notify students about live class', err);
+      }
     }
     navigate(`/live-class/${cId}`);
   };
