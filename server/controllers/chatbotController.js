@@ -31,10 +31,10 @@ export const chatbotResponse = async (req, res) => {
       });
     }
 
-    // Convert history for Groq/OpenAI format
+    // Convert history for Groq/OpenAI format (Support both DB format and Frontend format)
     const groqHistory = (history || []).slice(-6).map(msg => ({
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      content: msg.text
+      role: (msg.role || (msg.sender === 'user' ? 'user' : 'assistant')),
+      content: msg.content || msg.text
     }));
 
     const systemPrompt = `You are an intelligent academic assistant chatbot for a college Learning Management System (LMS). 

@@ -193,7 +193,7 @@ const ResultVerification = () => {
           {teacher && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-5 p-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[2.5rem] shadow-xl dark:shadow-2xl backdrop-blur-md">
                <div className="w-12 h-12 rounded-2xl overflow-hidden border border-slate-100 dark:border-white/20 hover:scale-105 transition-transform duration-500">
-                  <img src={teacher.profilePic || 'https://via.placeholder.com/50'} className="w-full h-full object-cover" alt="Node Origin" />
+                  <img src={teacher.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.name)}&background=random`} className="w-full h-full object-cover" alt="Node Origin" />
                </div>
                <div>
                   <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide leading-none">Certifying Instructor</p>
@@ -285,7 +285,7 @@ const ResultVerification = () => {
                       {['mst1', 'mst2', 'mst3', 'endSem'].map(field => (
                         <td key={field} className="p-4 text-center">
                           {isEditing ? (
-                            <input type="number" value={editingMarks[field] || 0} onChange={(e) => setEditingMarks({...editingMarks, [field]: Number(e.target.value)})} className="w-16 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-center text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                            <input type="number" value={editingMarks[field] === 0 || editingMarks[field] === undefined ? '' : editingMarks[field]} onChange={(e) => setEditingMarks({...editingMarks, [field]: Number(e.target.value)})} placeholder="0" className="w-16 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-center text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
                           ) : (
                             <span className="font-semibold text-slate-600 dark:text-slate-300 tabular-nums">{student.marks[field] || 0}</span>
                           )}
@@ -298,7 +298,7 @@ const ResultVerification = () => {
                       {['internalPractical', 'externalPractical'].map(field => (
                         <td key={field} className="p-4 text-center">
                           {isEditing ? (
-                            <input type="number" value={editingMarks[field] || 0} onChange={(e) => setEditingMarks({...editingMarks, [field]: Number(e.target.value)})} className="w-16 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-center text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
+                            <input type="number" value={editingMarks[field] === 0 || editingMarks[field] === undefined ? '' : editingMarks[field]} onChange={(e) => setEditingMarks({...editingMarks, [field]: Number(e.target.value)})} placeholder="0" className="w-16 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-center text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" />
                           ) : (
                             <span className="font-semibold text-slate-600 dark:text-slate-300 tabular-nums">{student.marks[field] || 0}</span>
                           )}

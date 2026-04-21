@@ -606,7 +606,7 @@ const ResultEntry = () => {
                                <>
                                   {['mst1', 'mst2', 'mst3', 'endSem'].map(f => (
                                      <td key={f} className="p-4 text-center">
-                                        <input type="text" value={student.marks[f] || ''} onChange={e=>handleMarkChange(student._id, f, e.target.value)} onBlur={()=>handleSaveSingleMark(student._id)} disabled={student.isLocked} className="w-14 h-11 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-center font-semibold text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all tabular-nums" />
+                                        <input type="text" value={student.marks[f] === 0 || student.marks[f] === undefined ? '' : student.marks[f]} onChange={e=>handleMarkChange(student._id, f, e.target.value)} onBlur={()=>handleSaveSingleMark(student._id)} placeholder="0" disabled={student.isLocked} className="w-14 h-11 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-center font-semibold text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all tabular-nums" />
                                      </td>
                                   ))}
                                 </>
@@ -615,7 +615,7 @@ const ResultEntry = () => {
                                <>
                                   {['internalPractical', 'externalPractical'].map(f => (
                                      <td key={f} className="p-4 text-center">
-                                        <input type="text" value={student.marks[f] || ''} onChange={e=>handleMarkChange(student._id, f, e.target.value)} onBlur={()=>handleSaveSingleMark(student._id)} disabled={student.isLocked} className="w-14 h-11 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-center font-semibold text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all tabular-nums" />
+                                        <input type="text" value={student.marks[f] === 0 || student.marks[f] === undefined ? '' : student.marks[f]} onChange={e=>handleMarkChange(student._id, f, e.target.value)} onBlur={()=>handleSaveSingleMark(student._id)} placeholder="0" disabled={student.isLocked} className="w-14 h-11 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-center font-semibold text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all tabular-nums" />
                                      </td>
                                   ))}
                                 </>

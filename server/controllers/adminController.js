@@ -723,7 +723,7 @@ export const unlockCourseResults = async (req, res) => {
 
         // Audit the override
         await ResultAudit.create({
-            action: 'ADMIN_UNLOCK',
+            action: 'UNLOCK',
             performedBy: req.user._id,
             course: courseId,
             semester: parseInt(semester),
@@ -749,7 +749,7 @@ export const approveCourseResults = async (req, res) => {
         );
 
         await ResultAudit.create({
-            action: 'ADMIN_APPROVE',
+            action: 'APPROVE',
             performedBy: req.user._id,
             course: courseId, semester: parseInt(semester), academicYear,
             details: { modifiedCount: result.modifiedCount }
@@ -770,7 +770,7 @@ export const rejectCourseResults = async (req, res) => {
         );
 
         await ResultAudit.create({
-            action: 'ADMIN_REJECT',
+            action: 'REJECT',
             performedBy: req.user._id,
             course: courseId, semester: parseInt(semester), academicYear,
             details: { modifiedCount: result.modifiedCount, reason }
