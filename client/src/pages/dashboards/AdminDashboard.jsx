@@ -14,6 +14,7 @@ import AdminBatchFinalization from '../../components/admin/AdminBatchFinalizatio
 import AdminAiManagement from '../../components/admin/AdminAiManagement';
 import AdminAccessRequests from '../../components/admin/AdminAccessRequests';
 import AdminPendingTeachers from '../../components/admin/AdminPendingTeachers';
+import AdminRewardFulfillment from '../../components/admin/AdminRewardFulfillment';
 import AttendanceManager from '../../components/teacher/AttendanceManager';
 import MonthlyRegister from '../../components/teacher/MonthlyRegister';
 import QuizArena from '../../components/student/QuizArena';
@@ -168,6 +169,7 @@ const AdminDashboard = () => {
     { id: 'batch-finalization', icon: CheckCircle, label: 'Batch Finalization' },
     { id: 'access-governance', icon: Shield, label: 'Access Governance' },
     { id: 'ai-management', icon: BrainCircuit, label: 'AI Management' },
+    { id: 'rewards', icon: ShoppingBag, label: 'Reward Fulfillment' },
     { id: 'system', icon: Settings, label: 'System Settings' },
   ];
 
@@ -560,6 +562,10 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
+          </motion.div>
+        ) : activeTab === 'rewards' ? (
+          <motion.div key="rewards" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <AdminRewardFulfillment user={user} />
           </motion.div>
         ) : activeTab === 'system' ? (
              <motion.div key="system" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
