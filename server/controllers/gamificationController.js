@@ -40,12 +40,20 @@ export const submitQuiz = async (req, res) => {
         const quiz = await Quiz.findById(quizId);
         if (!quiz) return res.status(404).json({ message: "Quiz not found" });
 
+        // 1. LIMIT: Check if user already attempted this quiz
+        const existingAttempt = await QuizAttempt.findOne({ user: userId, quiz: quizId });
+        if (existingAttempt) {
+            return res.status(403).json({ message: "Access Denied: You have already participated in this arena." });
+        }
+
         // Anti-cheat: Check if time taken is suspiciously low (e.g. < 5s for 10 questions)
         if (timeTaken < (quiz.questions.length * 0.5)) {
             return res.status(403).json({ message: "Abnormal speed detected. Submission flagged." });
         }
 
-        const { coins, rank } = await calculateQuizCoins(quiz, score, timeTaken, quiz.totalPoints);
+        // Use the coins exactly as set by admin (totalPoints)
+        const coins = quiz.totalPoints || 10;
+        const rank = (await QuizAttempt.countDocuments({ quiz: quizId })) + 1;
 
         const attempt = new QuizAttempt({
             user: userId,
@@ -98,6 +106,8 @@ export const submitQuiz = async (req, res) => {
             message: "Quiz processed successfully.",
             coinsEarned: coins,
             rank,
+            score,
+            maxScore: quiz.totalPoints,
             newBadges,
             totalCoins: user.coins,
             streak: user.streak
@@ -173,7 +183,15 @@ export const createQuiz = async (req, res) => {
 export const getQuizzes = async (req, res) => {
     try {
         const quizzes = await Quiz.find({ isActive: true }).select('title description category timeLimit totalPoints');
-        res.json(quizzes);
+        const attempts = await QuizAttempt.find({ user: req.user._id }).select('quiz');
+        const attemptedQuizIds = attempts.map(a => a.quiz.toString());
+
+        const quizzesWithStatus = quizzes.map(quiz => ({
+            ...quiz._doc,
+            isAttempted: attemptedQuizIds.includes(quiz._id.toString())
+        }));
+
+        res.json(quizzesWithStatus);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -187,4 +205,61 @@ export const getQuizDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const updateQuiz = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const quiz = await Quiz.findByIdAndUpdate(id, req.body, { new: true });
+    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+    res.json(quiz);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const deleteQuiz = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const quiz = await Quiz.findByIdAndDelete(id);
+    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+    res.json({ message: "Quiz deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Exported for daily activity tracking
+export const markDailyStreak = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const today = new Date().setHours(0,0,0,0);
+        const lastStreakDate = user.lastStreakedAt ? new Date(user.lastStreakedAt).setHours(0,0,0,0) : null;
+        const yesterday = new Date(Date.now() - 86400000).setHours(0,0,0,0);
+
+        if (lastStreakDate === today) {
+            return res.json({ message: "Already streaked today", streak: user.streak });
+        }
+
+        if (lastStreakDate === yesterday) {
+            user.streak += 1;
+        } else {
+            user.streak = 1;
+        }
+        user.lastStreakedAt = new Date();
+        // Award some coins for daily streak
+        user.coins += 10;
+        
+        await user.save();
+
+        res.json({
+            message: "Streak marked! +10 Scholar Coins awarded.",
+            streak: user.streak,
+            totalCoins: user.coins
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

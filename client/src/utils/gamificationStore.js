@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 'scholarmatrixdeployment_gamification_v1_';
+const STORAGE_PREFIX = 'scholarmatrix_gamification_v1_';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -52,6 +52,7 @@ export const getGamificationState = (studentId) => {
   const state = {
     studentId,
     xp: 0,
+    coins: 0,
     badges: [],
     passedQuizIds: [],
     streakDays: 0,
@@ -71,7 +72,7 @@ export const getGamificationState = (studentId) => {
 export const saveGamificationState = (studentId, state) => {
   localStorage.setItem(getStorageKey(studentId), JSON.stringify(state));
   try {
-    window.dispatchEvent(new CustomEvent('scholarmatrixdeployment:gamification_update', { detail: state }));
+    window.dispatchEvent(new CustomEvent('scholarmatrix:gamification_update', { detail: state }));
   } catch (e) {
     // ignore
   }
@@ -91,7 +92,7 @@ export const getLevelFromXp = (xp) => Math.floor((xp || 0) / 100);
 export const emitAchievement = (achievement) => {
   try {
     window.dispatchEvent(
-      new CustomEvent('scholarmatrixdeployment:achievement', {
+      new CustomEvent('scholarmatrix:achievement', {
         detail: achievement,
       })
     );
@@ -372,6 +373,10 @@ export const submitQuizAttemptForStudent = ({
   }
 
   // Save before awarding XP (so derived badges/streak computations are consistent).
+  // award coins
+  const coinReward = Math.floor(scorePercent / 10);
+  next.coins = (next.coins || 0) + coinReward;
+
   // Update streakDays again in case badges depend on it.
   next.streakDays = computeStreakDaysEndingAt(next.attendanceDates, getTodayKey());
 
@@ -387,7 +392,7 @@ export const submitQuizAttemptForStudent = ({
   emitAchievement({
     type: 'quiz_result',
     title: `${passed ? 'Passed' : 'Try Again'} - ${scorePercent}%`,
-    subtitle: passed ? 'Quiz cleared. XP pending.' : `You need ${passingPercentage || 70}% to pass.`,
+    subtitle: passed ? `Quiz cleared. +${coinReward} coins gained!` : `You need ${passingPercentage || 70}% to pass.`,
     icon: 'brain',
     color: passed ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40' : 'bg-amber-500/20 text-amber-200 border-amber-400/40',
   });

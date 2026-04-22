@@ -17,7 +17,7 @@ const NotificationListener = () => {
     socket.on('access-update', (data) => {
       if (data.studentId === user._id) {
         // Dispatch custom event for AchievementToaster
-        const event = new CustomEvent('scholarmatrixdeployment:achievement', {
+        const event = new CustomEvent('scholarmatrix:achievement', {
           detail: {
             title: `Access ${data.state}`,
             subtitle: data.message,
@@ -32,7 +32,7 @@ const NotificationListener = () => {
     // Listen for low attendance alerts
     socket.on('attendance-alert', (data) => {
       if (data.studentId === user._id) {
-        const event = new CustomEvent('scholarmatrixdeployment:achievement', {
+        const event = new CustomEvent('scholarmatrix:achievement', {
           detail: {
             title: 'Low Attendance Alert',
             subtitle: `Your attendance in ${data.courseCode} has dropped below 75%.`,

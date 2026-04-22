@@ -58,6 +58,8 @@ import AdminUserAiDetail from './pages/admin/AdminUserAiDetail';
 
 // Student / Gamified pages
 import QuizArena from './components/student/QuizArena';
+import MasterArena from './pages/student/MasterArena';
+import SessionTracker from './components/student/SessionTracker';
 
 // Result pages
 import ResultEntry from './pages/results/ResultEntry';
@@ -180,7 +182,7 @@ const AppContent = () => {
             const dept = dRes.data.find(d => d.code === res.data.department);
             if (dept) {
               localStorage.setItem('selectedDepartment', JSON.stringify(dept));
-              window.dispatchEvent(new CustomEvent('scholarmatrixdeployment:department_selected', { detail: dept }));
+              window.dispatchEvent(new CustomEvent('scholarmatrix:department_selected', { detail: dept }));
             }
           }
         }
@@ -201,6 +203,7 @@ const AppContent = () => {
         <div className="flex flex-col h-full">
           <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <GlobalAlertMarquee />
+      <SessionTracker />
       <main className="flex-grow flex flex-col relative w-full overflow-y-auto smooth-scroll min-h-0 bg-transparent gpu-accelerated">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -312,6 +315,20 @@ const AppContent = () => {
               <Achievements />
             </ProtectedRoute>
           } />
+
+          <Route path="/master-arena" element={
+            <ProtectedRoute allowedRoles={['student', 'admin']}>
+              <MasterArena />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/quiz-arena/:quizId" element={
+            <ProtectedRoute allowedRoles={['student', 'admin']}>
+              <QuizArena />
+            </ProtectedRoute>
+          } />
+
+
 
 
           

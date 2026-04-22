@@ -37,8 +37,8 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       setSelectedDept(e.detail);
     };
 
-    window.addEventListener('scholarmatrixdeployment:department_selected', handleDeptUpdate);
-    return () => window.removeEventListener('scholarmatrixdeployment:department_selected', handleDeptUpdate);
+    window.addEventListener('scholarmatrix:department_selected', handleDeptUpdate);
+    return () => window.removeEventListener('scholarmatrix:department_selected', handleDeptUpdate);
   }, []);
 
   useEffect(() => {
@@ -53,8 +53,8 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       }
     };
 
-    window.addEventListener('scholarmatrixdeployment:gamification_update', handleUpdate);
-    return () => window.removeEventListener('scholarmatrixdeployment:gamification_update', handleUpdate);
+    window.addEventListener('scholarmatrix:gamification_update', handleUpdate);
+    return () => window.removeEventListener('scholarmatrix:gamification_update', handleUpdate);
   }, [user]);
 
   const handleLogout = () => {
@@ -95,13 +95,16 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       ...(user.role === 'student' ? [
         { name: 'Results', path: '/results/my', icon: <FileText size={18} /> },
         { name: 'Attendance', path: '/daily-attendance', icon: <ShieldCheck size={18} /> },
-        { name: 'Quiz Arena', path: '/dashboard?tab=quizzes', icon: <Brain size={18} /> },
-        { name: 'Hall of Fame', path: '/achievements', icon: <Award size={18} /> }
+        { name: 'Quiz Arena', path: '/master-arena', icon: <Brain size={18} /> },
+        { name: 'Achievements', path: '/achievements', icon: <Award size={18} /> }
       ] : []),
-      ...(user.role === 'teacher' ? [{ name: 'Mark Entry', path: '/results/entry', icon: <Edit size={18} /> }] : []),
+      ...(user.role === 'teacher' ? [
+        { name: 'Mark Entry', path: '/results/entry', icon: <Edit size={18} /> }
+      ] : []),
       ...(user.role === 'admin' || user.role === 'hod' ? [
         { name: 'Results', path: '/results/verify', icon: <CheckCircle size={18} /> },
         ...(user.role === 'admin' ? [
+          { name: 'Quiz Arena', path: '/master-arena', icon: <Brain size={18} /> },
           { name: 'GPS Config', path: '/admin/gps-config', icon: <MapPin size={18} /> }
         ] : [])
       ] : [])

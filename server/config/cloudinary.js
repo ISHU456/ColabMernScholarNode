@@ -10,6 +10,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+console.log("Institutional Asset Gateway Configured:", {
+  cloud: process.env.CLOUDINARY_CLOUD_NAME,
+  key_prefix: process.env.CLOUDINARY_API_KEY?.slice(0, 4),
+  has_secret: !!process.env.CLOUDINARY_API_SECRET
+});
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {

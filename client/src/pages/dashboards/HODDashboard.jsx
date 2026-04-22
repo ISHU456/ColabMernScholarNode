@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Home, Users, BarChart2, MessageSquare, BookOpen, Clock, UserCheck } from 'lucide-react';
+import { Home, Users, BarChart2, MessageSquare, BookOpen, Clock, UserCheck, Brain, Target, ChevronRight, X } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
-import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 import PageLoader from '../../components/PageLoader';
 
 const HODDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const { user } = useSelector(state => state.auth);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    return tabParam || localStorage.getItem('hodActiveTab') || 'overview';
+  });
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate();
+  const [quizzes, setQuizzes] = useState([]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -20,6 +31,24 @@ const HODDashboard = () => {
     setIsLoading(true);
     setIsLoading(false);
   }, [activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem('hodActiveTab', activeTab);
+    if (activeTab === 'quizzes') {
+      const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes`, config)
+        .then(r => setQuizzes(r.data))
+        .catch(e => console.error(e));
+    }
+  }, [activeTab, user.token]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && menuItems.some(i => i.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
 
   const menuItems = [
     { id: 'overview', icon: Home, label: 'Department Overview' },
@@ -43,7 +72,7 @@ const HODDashboard = () => {
   );
 
   return (
-    <div className="flex min-h-[calc(100vh-73px)] flex-col lg:flex-row bg-gray-50 dark:bg-[#0f172a] relative overflow-hidden">
+    <div className="flex min-h-[calc(100vh-73px)] flex-col lg:flex-row bg-gray-50 dark:bg-[#0f172a] relative overflow-hidden text-slate-900 dark:text-slate-100">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -113,7 +142,7 @@ const HODDashboard = () => {
                         <XAxis dataKey="subject" />
                         <YAxis />
                         <RechartsTooltip />
-                        <Bar dataKey="passRate" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="passRate" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                     )}
@@ -134,8 +163,9 @@ const HODDashboard = () => {
                </div>
             </div>
           </div>
+
         ) : (
-          <div className="flex bg-gray-100 dark:bg-gray-900/50 h-[50vh] items-center justify-center text-gray-500 rounded-2xl">
+          <div className="flex items-center justify-center h-64 text-gray-400 italic">
             {activeTab} Management Module...
           </div>
         )}
@@ -143,4 +173,5 @@ const HODDashboard = () => {
     </div>
   );
 };
+
 export default HODDashboard;

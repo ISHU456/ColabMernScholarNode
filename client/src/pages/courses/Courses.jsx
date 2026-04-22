@@ -61,8 +61,8 @@ const Courses = () => {
       setSelectedDept(e.detail);
     };
 
-    window.addEventListener('scholarmatrixdeployment:department_selected', handleDeptUpdate);
-    return () => window.removeEventListener('scholarmatrixdeployment:department_selected', handleDeptUpdate);
+    window.addEventListener('scholarmatrix:department_selected', handleDeptUpdate);
+    return () => window.removeEventListener('scholarmatrix:department_selected', handleDeptUpdate);
   }, []);
 
   useEffect(() => {

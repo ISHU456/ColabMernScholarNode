@@ -349,7 +349,7 @@ export const getStudentDetails = async (req, res) => {
 export const updateStudentEnrollment = async (req, res) => {
     try {
         const { studentId } = req.params;
-        const { department, semester, section, rollNumber, excludedCourseIds, cgpa, percentage, aboutMe } = req.body;
+        const { department, semester, section, rollNumber, excludedCourseIds, cgpa, percentage, aboutMe, coins } = req.body;
 
         // 1. Update Student Profile
         const updateData = {};
@@ -361,6 +361,7 @@ export const updateStudentEnrollment = async (req, res) => {
         if (cgpa !== undefined) updateData.cgpa = cgpa;
         if (percentage !== undefined) updateData.percentage = percentage;
         if (aboutMe !== undefined) updateData.aboutMe = aboutMe;
+        if (coins !== undefined) updateData.coins = coins;
         
         await User.findByIdAndUpdate(studentId, updateData);
 

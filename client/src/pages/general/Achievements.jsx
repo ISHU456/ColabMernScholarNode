@@ -5,7 +5,7 @@ import {
   Trophy, Flame, Award, Zap, Target, Star, 
   CheckCircle2, Info, ArrowRight, Brain, 
   BookOpen, Calendar, Rocket, Shield, Terminal, 
-  Code, Cpu, Laptop
+  Code, Cpu, Laptop, Coins, ChevronRight, Sparkles
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getGamificationState, getLevelFromXp } from '../../utils/gamificationStore';
@@ -18,18 +18,26 @@ const Achievements = () => {
     if (user?._id) {
       setState(getGamificationState(user._id));
     }
+    
+    const handleUpdate = (e) => {
+      if (e.detail) setState(e.detail);
+    };
+    window.addEventListener('scholarmatrix:gamification_update', handleUpdate);
+    return () => window.removeEventListener('scholarmatrix:gamification_update', handleUpdate);
   }, [user]);
 
   const level = getLevelFromXp(state?.xp || 0);
+  const currentLevelXp = level * 100;
   const nextLevelXp = (level + 1) * 100;
-  const progressToNextLevel = ((state?.xp || 0) % 100);
+  const xpInCurrentLevel = (state?.xp || 0) - currentLevelXp;
+  const progressToNextLevel = (xpInCurrentLevel / 100) * 100;
 
   const badgeInventory = [
     {
       id: 'streak_master',
       title: 'Streak Master',
-      requirement: 'Maintain a 7-day learning streak',
-      meaning: 'Awarded to students who show exceptional consistency by logging in and learning for 7 consecutive days.',
+      requirement: '7-day learning streak',
+      meaning: 'Exceptional consistency: log in and learn for 7 consecutive days.',
       icon: Flame,
       color: 'text-orange-500',
       bgColor: 'bg-orange-500/10',
@@ -38,8 +46,8 @@ const Achievements = () => {
     {
       id: 'quiz_genius',
       title: 'Quiz Genius',
-      requirement: 'Score 90% or above in any quiz',
-      meaning: 'Recognizes academic excellence and deep understanding of subject matter through high quiz performance.',
+      requirement: '90%+ quiz score',
+      meaning: 'Academic excellence: deep understanding of subject matter.',
       icon: Brain,
       color: 'text-amber-500',
       bgColor: 'bg-amber-500/10',
@@ -48,22 +56,36 @@ const Achievements = () => {
     {
       id: 'consistent_learner',
       title: 'Consistent Learner',
-      requirement: '100% attendance for 7 days',
-      meaning: 'Given to students who attend all their scheduled classes and lectures over a full week.',
+      requirement: '100% attendance (7 days)',
+      meaning: 'Perfect participation: attend all scheduled lectures for a week.',
       icon: CheckCircle2,
       color: 'text-emerald-500',
       bgColor: 'bg-emerald-500/10',
-      borderColor: 'border-emerald-500/20'
+      borderColor: 'border-emerald-400/20'
     },
     {
       id: 'course_completer',
       title: 'Course Completer',
-      requirement: 'Finish all materials in a course',
-      meaning: 'A prestigious badge for students who complete every lecture, video, and assignment in a specific subject.',
+      requirement: 'Finish all course materials',
+      meaning: 'Mastery: complete every lecture, video, and assignment in a subject.',
       icon: Award,
       color: 'text-purple-500',
       bgColor: 'bg-purple-500/10',
       borderColor: 'border-purple-500/20'
+    }
+  ];
+
+  const monthlyBadges = [
+    {
+      id: 'april_pioneer',
+      title: 'April Pioneer 2026',
+      requirement: 'Active in April',
+      meaning: 'Commemorative badge for founding members active during April 2026.',
+      icon: Star,
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-500/10',
+      borderColor: 'border-blue-500/20',
+      isEarned: true // Mocked for commemorative
     },
     {
       id: 'level_5_climber',
@@ -84,191 +106,287 @@ const Achievements = () => {
       color: 'text-primary-500',
       bgColor: 'bg-primary-500/10',
       borderColor: 'border-primary-500/20'
+    },
+    {
+      id: 'spring_scholar',
+      title: 'Spring Scholar',
+      requirement: 'Earn 500 XP this month',
+      meaning: 'Special seasonal badge for high performers in the spring semester.',
+      icon: Sparkles,
+      color: 'text-rose-500',
+      bgColor: 'bg-rose-500/10',
+      borderColor: 'border-rose-500/20',
+      isEarned: (state?.xp || 0) >= 500
     }
   ];
 
   const xpRules = [
-    { action: 'Complete a Video', xp: '+15 XP', icon: Zap },
-    { action: 'Read a PDF/E-book', xp: '+10 XP', icon: BookOpen },
-    { action: 'Daily Attendance', xp: '+10 XP', icon: Calendar },
-    { action: 'Submit Assignment', xp: '+20 XP', icon: Target },
-    { action: 'Pass a Quiz', xp: '+30 XP', icon: Brain }
+    { action: 'Join Live Class', xp: '+10 XP', icon: Calendar, rule: 'Marked upon attendance confirmation' },
+    { action: 'Complete Video', xp: '+15 XP', icon: Zap, rule: 'Watch at least 90% of the duration' },
+    { action: 'Read Document', xp: '+10 XP', icon: BookOpen, rule: 'Open and scroll through course material' },
+    { action: 'Submit Assignment', xp: '+20 XP', icon: Target, rule: 'Upload valid assignment before deadline' },
+    { action: 'Pass Quiz', xp: '+30 XP', icon: Brain, rule: 'Score above passing threshold (usually 70%)' }
+  ];
+
+  const coinRules = [
+    { action: 'High Quiz Score', coins: '1-10 🪙', rule: 'Earn coins based on quiz percentage' },
+    { action: 'Weekly Streak', coins: '50 🪙', rule: 'Maintain 7-day streak to get bonus' },
+    { action: 'Course Finished', coins: '100 🪙', rule: 'Complete all requirements of a module' }
   ];
 
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#030712] pt-28 pb-20 px-6 md:px-12 lg:px-24">
-      <div className="container mx-auto max-w-6xl">
+    <div className="min-h-screen bg-white dark:bg-[#030712] pt-28 pb-32 px-6 md:px-12">
+      <div className="max-w-[1400px] mx-auto">
         
-        {/* --- HEADER SECTION --- */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-          <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 font-bold text-xs uppercase tracking-wide mb-6 border border-primary-200 dark:border-primary-800/50">
-              <Trophy size={14} className="text-amber-500" />
-              <span>Learning Progress</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white uppercase tracking-tight">
-              LMS Rewards & Stats
+        {/* --- DYNAMIC HEADER --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          <div className="lg:col-span-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-[0.2em] mb-6 border border-amber-500/20"
+            >
+              <Trophy size={14} className="fill-current" />
+              <span>Institutional Achievement Ledger</span>
+            </motion.div>
+            <h1 className="text-5xl md:text-7xl font-semibold text-gray-900 dark:text-white uppercase tracking-tighter italic leading-[0.9]">
+              Scholar <span className="text-primary-600 dark:text-primary-500">Momentum</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-4 font-medium max-w-xl">
-              A comprehensive look at our gamified learning system. {user.role !== 'student' ? 'As a ' + user.role + ', you can track your personal interaction stats or monitor how students earn rewards.' : 'Track your academic milestones, earn badges, and level up by staying consistent with your studies.'}
+            <p className="text-lg text-gray-500 dark:text-gray-400 mt-8 font-medium max-w-2xl leading-relaxed uppercase tracking-tight">
+              Tracking your cognitive evolution and academic milestones. Every interaction is mapped, every achievement is recorded in the ScholarMatrix lattice.
             </p>
           </div>
-          
-          <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-800 shadow-xl flex items-center gap-8">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-3xl shadow-2xl shadow-primary-500/40">
+
+          <div className="bg-gray-900 dark:bg-white rounded-[3rem] p-10 text-white dark:text-gray-900 shadow-2xl relative overflow-hidden group">
+            <div className="relative z-10">
+               <div className="text-xs font-bold uppercase tracking-[0.3em] opacity-50 mb-4">Neural Credits</div>
+               <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-3xl bg-white/10 dark:bg-gray-900/10 flex items-center justify-center text-amber-400">
+                    <Coins size={36} className="fill-current" />
+                  </div>
+                  <div>
+                    <div className="text-6xl font-bold tracking-tighter">{user?.coins || 0}</div>
+                    <div className="text-xs font-bold uppercase tracking-widest opacity-60">Scholar Coins</div>
+                  </div>
+               </div>
+            </div>
+            <div className="absolute top-[-20%] right-[-10%] opacity-10 group-hover:rotate-12 transition-all duration-1000">
+              <Sparkles size={240} className="fill-current" />
+            </div>
+          </div>
+        </div>
+
+        {/* --- XP & LEVEL PROGRESS --- */}
+        <div className="glass p-10 rounded-[4rem] border border-gray-100 dark:border-gray-800 shadow-xl mb-16 relative overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 items-center relative z-10">
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center text-white font-bold text-4xl shadow-2xl shadow-primary-500/30">
                 {level}
               </div>
-              <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-lg">
-                <Star size={20} className="text-amber-500 fill-current" />
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Status</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Level {level}</h3>
               </div>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Current Level</p>
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white uppercase tracking-tight mb-3">Academic Elite</h3>
-              <div className="w-48 h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+
+            <div className="lg:col-span-2">
+              <div className="flex justify-between items-end mb-4">
+                <div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Neural Growth</p>
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight">{state?.xp || 0} Total XP</h4>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Target</p>
+                  <h4 className="text-sm font-bold text-primary-600 uppercase tracking-tight">{nextLevelXp - (state?.xp || 0)} XP Needed</h4>
+                </div>
+              </div>
+              <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 p-1">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNextLevel}%` }}
-                  className="h-full bg-gradient-to-r from-primary-500 to-indigo-600 rounded-full"
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-primary-600 to-indigo-500 rounded-full shadow-[0_0_15px_rgba(67,97,238,0.5)]"
                 />
               </div>
-              <p className="text-xs font-bold text-gray-500 mt-2 uppercase tracking-wide">
-                {state?.xp || 0} / {nextLevelXp} XP to Level {level + 1}
-              </p>
+            </div>
+
+            <div className="bg-orange-500/5 p-6 rounded-3xl border border-orange-500/10">
+               <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20">
+                    <Flame size={20} className="fill-current" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{user?.streak || 0} Days</div>
+                    <div className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Active Streak</div>
+                  </div>
+               </div>
+               <div className="h-1.5 bg-orange-500/10 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, ((user?.streak || 0) / 7) * 100)}%` }}
+                    className="h-full bg-orange-500"
+                  />
+               </div>
+               <p className="text-[9px] font-bold text-gray-400 uppercase mt-2 text-right tracking-widest">
+                {(user?.streak || 0) >= 7 ? 'Master Achieved' : `${7 - (user?.streak || 0)} days to Master`}
+               </p>
             </div>
           </div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 blur-[120px] rounded-full" />
         </div>
 
-        {/* --- STATS GRID --- */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-xl group hover:-translate-y-2 transition-all duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 mb-8 group-hover:scale-110 transition-transform">
-              <Flame size={32} className="fill-current" />
-            </div>
-            <h4 className="text-4xl font-semibold text-gray-900 dark:text-white mb-2">{state?.streakDays || 0}</h4>
-            <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Day Streak</p>
-          </div>
+        {/* --- BADGE CATEGORIES --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
           
-          <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-xl group hover:-translate-y-2 transition-all duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-8 group-hover:scale-110 transition-transform">
-              <Award size={32} className="fill-current" />
-            </div>
-            <h4 className="text-4xl font-semibold text-gray-900 dark:text-white mb-2">{state?.badges?.length || 0}</h4>
-            <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Badges Earned</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-xl group hover:-translate-y-2 transition-all duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-8 group-hover:scale-110 transition-transform">
-              <Zap size={32} className="fill-current" />
-            </div>
-            <h4 className="text-4xl font-semibold text-gray-900 dark:text-white mb-2">{state?.xp || 0}</h4>
-            <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Total Experience</p>
-          </div>
-        </div>
-        
-
-        {/* --- BADGE SHOWCASE --- */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white uppercase tracking-tight mb-10 flex items-center gap-4">
-            Badge Meaning & Legend
-            <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {badgeInventory.map((badge) => {
-              const isEarned = state?.badges?.includes(badge.id);
-              return (
-                <div 
-                  key={badge.id}
-                  className={`bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 border ${badge.borderColor} shadow-xl relative overflow-hidden group transition-all duration-500 ${!isEarned && 'opacity-60 grayscale'}`}
-                >
-                  <div className={`w-16 h-16 rounded-2xl ${badge.bgColor} ${badge.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10`}>
-                    <badge.icon size={32} className={isEarned ? 'fill-current' : ''} />
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white uppercase tracking-tight mb-3 relative z-10">
-                    {badge.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-6 relative z-10">
-                    {badge.meaning}
-                  </p>
-                  
-                  <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between relative z-10">
-                    <div>
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Requirement</p>
-                      <p className="text-xs font-bold text-gray-700 dark:text-gray-300">{badge.requirement}</p>
+          {/* Institutional Badges */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter mb-10 flex items-center gap-4 italic">
+              <Award className="text-primary-600" /> Core Academic Badges
+            </h2>
+            <div className="space-y-6">
+              {badgeInventory.map((badge) => {
+                const isEarned = (state?.badges || []).includes(badge.id);
+                return (
+                  <motion.div 
+                    key={badge.id}
+                    whileHover={{ x: 10 }}
+                    className={`flex items-center gap-6 p-6 rounded-[2.5rem] border transition-all ${isEarned ? `bg-white dark:bg-gray-900 ${badge.borderColor} shadow-lg shadow-gray-100 dark:shadow-none` : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent opacity-50 grayscale'}`}
+                  >
+                    <div className={`w-16 h-16 rounded-2xl ${badge.bgColor} ${badge.color} flex items-center justify-center shrink-0`}>
+                      <badge.icon size={28} className={isEarned ? 'fill-current' : ''} />
                     </div>
-                    {isEarned ? (
-                      <div className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-xs font-semibold uppercase tracking-wide">
-                        Unlocked
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-4 mb-1">
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight truncate">{badge.title}</h3>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-lg ${isEarned ? 'bg-emerald-500/10 text-emerald-600' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
+                          {isEarned ? 'Authenticated' : 'Pending'}
+                        </span>
                       </div>
-                    ) : (
-                      <div className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-400 rounded-full text-xs font-semibold uppercase tracking-wide">
-                        Locked
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium leading-relaxed mb-2">{badge.meaning}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Logic:</span>
+                        <span className="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">{badge.requirement}</span>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Decorative background element */}
-                  <div className={`absolute -bottom-10 -right-10 w-32 h-32 rounded-full ${badge.bgColor} blur-3xl opacity-20 group-hover:opacity-40 transition-opacity`} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-
-
-        {/* --- HOW TO EARN XP --- */}
-        <div className="bg-gradient-to-br from-primary-600 to-indigo-700 rounded-[3rem] p-12 text-white shadow-2xl shadow-primary-500/20 relative overflow-hidden">
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl font-semibold uppercase tracking-tight mb-6">How to Earn XP?</h2>
-              <p className="text-white/80 font-medium mb-10 leading-relaxed">
-                Experience points (XP) are awarded for every productive action you take in ScholarMatrix. 
-                Consistent participation not only increases your level but also prepares you for exams.
-              </p>
-              <div className="space-y-4">
-                {xpRules.map((rule, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                      <rule.icon size={20} />
                     </div>
-                    <span className="flex-1 font-bold">{rule.action}</span>
-                    <span className="font-semibold text-amber-400">{rule.xp}</span>
-                  </div>
-                ))}
-              </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Monthly / Limited Edition Badges */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter mb-10 flex items-center gap-4 italic">
+              <Star className="text-amber-500" /> Monthly Milestones
+            </h2>
+            <div className="space-y-6">
+              {monthlyBadges.map((badge) => {
+                const isEarned = badge.isEarned;
+                return (
+                  <motion.div 
+                    key={badge.id}
+                    whileHover={{ x: 10 }}
+                    className={`flex items-center gap-6 p-6 rounded-[2.5rem] border transition-all ${isEarned ? `bg-white dark:bg-gray-900 ${badge.borderColor} shadow-xl shadow-gray-100 dark:shadow-none` : 'bg-gray-50/50 dark:bg-gray-900/20 border-transparent opacity-50 grayscale'}`}
+                  >
+                    <div className={`w-16 h-16 rounded-2xl ${badge.bgColor} ${badge.color} flex items-center justify-center shrink-0`}>
+                      <badge.icon size={28} className={isEarned ? 'fill-current' : ''} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-4 mb-1">
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight truncate">{badge.title}</h3>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-lg ${isEarned ? 'bg-amber-500/10 text-amber-600' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
+                          {isEarned ? 'Collector Item' : 'Seasonal'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium leading-relaxed mb-2">{badge.meaning}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Logic:</span>
+                        <span className="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">{badge.requirement}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
             
-            <div className="bg-white/10 backdrop-blur-xl rounded-[2.5rem] p-10 border border-white/20">
-              <h3 className="text-xl font-semibold uppercase tracking-tight mb-8 flex items-center gap-3">
-                <Shield size={24} />
-                Gamification Rules
-              </h3>
-              <ul className="space-y-6">
-                <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center text-primary-900 font-semibold text-xs">1</div>
-                  <p className="text-sm font-medium text-white/90">Streaks are reset if you don't log in for more than 24 hours.</p>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center text-primary-900 font-semibold text-xs">2</div>
-                  <p className="text-sm font-medium text-white/90">XP is calculated based on active engagement, not just clicks.</p>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center text-primary-900 font-semibold text-xs">3</div>
-                  <p className="text-sm font-medium text-white/90">Some special badges are awarded manually by faculty for outstanding performance.</p>
-                </li>
-              </ul>
+            <div className="mt-12 p-8 rounded-[3rem] bg-indigo-600 text-white relative overflow-hidden">
+               <div className="relative z-10">
+                  <h4 className="text-lg font-bold uppercase tracking-tighter italic mb-4">Coming Soon: Legendaries</h4>
+                  <p className="text-xs font-medium text-white/70 leading-relaxed mb-6">We are finalizing the algorithm for "Semester Top Ranker" and "Research Pioneer" badges. Stay tuned.</p>
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div 
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      className="w-1/2 h-full bg-white/30"
+                    />
+                  </div>
+               </div>
+               <Shield size={120} className="absolute bottom-[-20%] right-[-10%] opacity-10 rotate-12" />
             </div>
           </div>
+        </div>
 
-          {/* Background Decorative Circles */}
-          <div className="absolute top-[-10%] left-[-5%] w-64 h-64 rounded-full bg-white/5 blur-3xl" />
-          <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 rounded-full bg-white/5 blur-3xl" />
+        {/* --- SYSTEM PROTOCOLS (RULES) --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          
+          <div className="bg-gray-50 dark:bg-gray-900/40 p-12 rounded-[4rem] border border-gray-100 dark:border-gray-800">
+             <h3 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter mb-8 flex items-center gap-3">
+               <Zap className="text-amber-500" /> XP Generation Protocol
+             </h3>
+             <div className="space-y-4">
+                {xpRules.map((rule, i) => (
+                  <div key={i} className="flex items-center gap-6 p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                    <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 shrink-0">
+                      <rule.icon size={22} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight">{rule.action}</span>
+                        <span className="text-sm font-bold text-primary-600">{rule.xp}</span>
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{rule.rule}</p>
+                    </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          <div className="bg-gray-50 dark:bg-gray-900/40 p-12 rounded-[4rem] border border-gray-100 dark:border-gray-800">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter mb-8 flex items-center gap-3">
+                <Coins className="text-amber-500" /> Neural Credits Accrual Rules
+              </h3>
+             <div className="space-y-4">
+                {coinRules.map((rule, i) => (
+                  <div key={i} className="flex items-center gap-6 p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
+                    <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 shrink-0">
+                      <Coins size={22} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight">{rule.action}</span>
+                        <span className="text-sm font-bold text-amber-500">{rule.coins}</span>
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{rule.rule}</p>
+                    </div>
+                  </div>
+                ))}
+             </div>
+             
+             <div className="mt-10 p-6 bg-red-500/5 rounded-[2rem] border border-red-500/10">
+                <div className="flex gap-4">
+                  <Info size={20} className="text-red-500 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-red-600 uppercase tracking-widest mb-2">Penalty Protocol</p>
+                    <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed uppercase">
+                      Inactivity for more than 48 hours results in a streak reset. Fraudulent engagement detection will result in immediate Neural Credit voiding.
+                    </p>
+                  </div>
+                </div>
+             </div>
+          </div>
+
         </div>
 
       </div>

@@ -40,7 +40,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const initialCredits = (role === 'teacher' || role === 'hod' || role === 'admin') ? 50 : 10;
+    const initialCoins = (role === 'teacher' || role === 'hod' || role === 'admin') ? 50 : 10;
     // For teacher approval workflow
     const isTeacher = role === 'teacher';
     const finalIsActive = role === 'student' ? false : (isTeacher ? false : true);
@@ -53,7 +53,7 @@ export const registerUser = async (req, res) => {
       name, email: normalizedEmail, password, role, dob, address, contact, 
       enrollmentNumber, batch, department, year, semester, rollNumber,
       employeeId, securityQuestion, securityAnswer, profilePic: finalProfilePic,
-      credits: initialCredits,
+      coins: initialCoins,
       isEmailVerified: userEmailVerified,
       isActive: finalIsActive,
       isAuthorized: finalIsAuthorized,
@@ -73,7 +73,9 @@ export const registerUser = async (req, res) => {
         _id: user._id, name: user.name, email: user.email, role: user.role,
         department: user.department, assignedSemesters: user.assignedSemesters,
         semester: user.semester, enrollmentNumber: user.enrollmentNumber, batch: user.batch,
-        profilePic: user.profilePic, token: generateToken(user._id),
+        profilePic: user.profilePic, 
+        coins: user.coins,
+        token: generateToken(user._id),
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -141,6 +143,7 @@ export const loginUser = async (req, res) => {
         enrollmentNumber: user.enrollmentNumber, 
         batch: user.batch,
         profilePic: user.profilePic, 
+        coins: user.coins,
         faceRegistered: !!user.faceRegistered, // Force boolean
         token: generateToken(user._id),
       });

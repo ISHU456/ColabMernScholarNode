@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Trash2, Save, X, Brain, Clock, 
-  Target, Zap, Shield, HelpCircle, Loader2 
+  Target, Zap, Shield, HelpCircle, ChevronDown, ChevronUp, Loader2
 } from 'lucide-react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -38,10 +38,16 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
           const config = { headers: { Authorization: `Bearer ${user.token}` } };
           const res = await axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes/${quizId}`, config);
           
+          // Enforce 'question' as the definitive field for the inquiry text
           if (res.data && res.data.questions && Array.isArray(res.data.questions)) {
             res.data.questions = res.data.questions.map(q => {
+              // Extract the question text from any possible legacy field
               const definitiveText = q.question || q.text || q.statement || q.questionText || q.q || '';
+              
+              // Create a clean object with 'question' as the primary text field
               const normalizedQ = { ...q, question: definitiveText };
+              
+              // Purge legacy fields to prevent state shadowing and data corruption
               delete normalizedQ.text;
               delete normalizedQ.statement;
               delete normalizedQ.questionText;
@@ -53,7 +59,7 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
             setQuizForm(res.data);
           }
         } catch (err) {
-          console.error("Failed to fetch quiz data:", err);
+          alert("Failed to fetch node parameters: " + err.message);
         } finally {
           setIsLoading(false);
         }
@@ -93,10 +99,10 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       if (quizId) {
         await axios.put(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes/${quizId}`, quizForm, config);
-        alert("Quiz updated successfully!");
+        alert("Neural Quiz Node Recalibrated!");
       } else {
         await axios.post(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes`, quizForm, config);
-        alert("Quiz created successfully!");
+        alert("Neural Quiz Node Deployed!");
       }
       if (onSave) onSave();
       if (onClose) onClose();
@@ -108,7 +114,7 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
   };
 
   const handleAiGenerate = async () => {
-    if (!aiPrompt) return alert("Please enter a topic for AI generation.");
+    if (!aiPrompt) return alert("Please specify a neural topic for generation.");
     setIsGenerating(true);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
@@ -120,15 +126,15 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
       if (Array.isArray(res.data)) {
         setQuizForm({
           ...quizForm,
-          title: aiPrompt + " Quiz",
+          title: aiPrompt + " AI Quiz",
           questions: res.data.map(q => ({
             question: q.question,
             options: q.options,
             correctAnswer: q.correctAnswer,
-            explanation: q.explanation || `Explanation for ${aiPrompt} question.`
+            explanation: q.explanation || `Derived from neural patterns regarding ${aiPrompt}.`
           }))
         });
-        alert("5 AI questions generated!");
+        alert("Neural Patterns Synchronized: 5 Question Blocks Generated.");
       }
     } catch (err) {
       alert("AI Generation failed: " + err.message);
@@ -156,8 +162,8 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
               <Brain size={24} />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-white uppercase tracking-tighter">{quizId ? 'Edit Quiz' : 'Create New Quiz'}</h2>
-              <p className="text-xs text-indigo-400 font-bold uppercase tracking-wide mt-1">{quizId ? 'Modify quiz settings' : 'Configure questions and rewards'}</p>
+               <h2 className="text-xl font-semibold text-white uppercase tracking-tighter">{quizId ? 'Quiz Recalibration' : 'Quiz Generator Core'}</h2>
+               <p className="text-xs text-indigo-400 font-bold uppercase tracking-wide mt-1">{quizId ? 'Modify System Logic' : 'Configure Logic & Rewards'}</p>
             </div>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-2xl text-gray-500 transition-all">
@@ -190,12 +196,12 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
               </div>
               <div className="p-6 rounded-3xl bg-indigo-600/5 border border-indigo-500/20 flex flex-col md:flex-row items-center gap-4">
                  <div className="flex-1">
-                    <label className="block text-xs font-semibold text-indigo-400 uppercase tracking-wide mb-2">AI Quiz Generator</label>
+                    <label className="block text-xs font-semibold text-indigo-400 uppercase tracking-wide mb-2">AI Neural Generator</label>
                     <input 
                       type="text" 
                       value={aiPrompt}
                       onChange={e => setAiPrompt(e.target.value)}
-                      placeholder="Enter a topic (e.g. JavaScript)..."
+                      placeholder="Enter topic for AI generation..."
                       className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none focus:border-indigo-500 transition-all"
                     />
                  </div>
@@ -211,16 +217,17 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
               </div>
             </div>
             <div className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-6">
-                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wide flex items-center gap-2"><Zap size={14}/> Reward Settings</h3>
+                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wide flex items-center gap-2"><Zap size={14}/> Reward Logic</h3>
                 <div className="space-y-4">
                    <div>
-                      <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Reward Coins</label>
-                      <input 
-                        type="number" 
-                        value={quizForm.totalPoints} 
-                        onChange={e => setQuizForm({...quizForm, totalPoints: parseInt(e.target.value)})} 
-                        className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none" 
-                      />
+                     <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Neural Reward (Coins)</label>
+                     <input 
+                       type="number" 
+                       value={quizForm.totalPoints} 
+                       onChange={e => setQuizForm({...quizForm, totalPoints: parseInt(e.target.value)})} 
+                       className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none" 
+                       placeholder="Coins to award on completion"
+                     />
                    </div>
                    <div>
                      <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Ideal Time (Min)</label>
@@ -229,6 +236,9 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
                    <div>
                      <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Time Limit (Min)</label>
                      <input type="number" value={quizForm.timeLimit} onChange={e => setQuizForm({...quizForm, timeLimit: parseInt(e.target.value)})} className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none" />
+                   </div>
+                   <div className="p-4 rounded-2xl bg-indigo-600/10 border border-indigo-500/20">
+                      <p className="text-xs font-semibold text-gray-500 uppercase leading-relaxed uppercase italic tracking-wide">Institutional Policy: Rewards are fixed to the value above and awarded upon successful synchronization.</p>
                    </div>
                 </div>
             </div>
@@ -333,7 +343,7 @@ const QuizGenerator = ({ onClose, onSave, quizId }) => {
                 disabled={isLoading}
                 className="px-10 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl text-xs font-semibold uppercase tracking-wide shadow-xl shadow-indigo-600/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
               >
-                {isLoading ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />} {quizId ? 'Save Changes' : 'Create Quiz'}
+                {isLoading ? <Zap className="animate-spin" size={16} /> : <Save size={16} />} {quizId ? 'Recalibrate Node' : 'Deploy Quiz Node'}
               </button>
            </div>
         </div>

@@ -17,6 +17,8 @@ import AttendanceManager from '../../components/teacher/AttendanceManager';
 import CourseAccessManager from '../../components/teacher/CourseAccessManager';
 import MonthlyRegister from '../../components/teacher/MonthlyRegister';
 import QuizGenerator from '../../components/teacher/QuizGenerator';
+import QuizArena from '../../components/student/QuizArena';
+import { useLocation } from 'react-router-dom';
 
 const DAYS   = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const TYPES  = [
@@ -142,7 +144,12 @@ const SessionCard = ({ s, onEdit, onDelete, onLive }) => {
 const FacultyDashboard = () => {
   const { user }  = useSelector(s => s.auth);
   const navigate  = useNavigate();
-  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('faculty_active_tab') || 'register');
+  const location  = useLocation();
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    return tabParam || localStorage.getItem('faculty_active_tab') || 'register';
+  });
   useEffect(() => { localStorage.setItem('faculty_active_tab', activeTab); }, [activeTab]);
   const [schedule, setSchedule]   = useState([]);
   const [myCourses, setMyCourses] = useState([]);
@@ -157,6 +164,15 @@ const FacultyDashboard = () => {
   const [viewMode, setViewMode]     = useState(() => localStorage.getItem('faculty_schedule_view_mode') || 'list');
   useEffect(() => { localStorage.setItem('faculty_schedule_filter_day', filterDay); }, [filterDay]);
   useEffect(() => { localStorage.setItem('faculty_schedule_view_mode', viewMode); }, [viewMode]);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && navItems.some(i => i.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
+  
   const [toast, setToast]           = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [globalSelectedSemester, setGlobalSelectedSemester] = useState(parseInt(localStorage.getItem('faculty_sem')) || 1);
@@ -164,6 +180,7 @@ const FacultyDashboard = () => {
   const [lastCourseId, setLastCourseId] = useState(localStorage.getItem('faculty_last_course_id') || null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeQuizId, setActiveQuizId] = useState(null);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -225,7 +242,6 @@ const FacultyDashboard = () => {
     { id:'courses', label:'My Course Hub', icon: BookOpen },
     { id:'grading', label:'Grading', icon: ClipboardCheck },
     { id:'results', label:'Exam Grades', icon: BarChart2 },
-    { id:'quizzes', label:'Quiz Hub', icon: Radio },
     { id:'announcements', label:'Notices', icon: Megaphone },
   ];
 
@@ -236,16 +252,6 @@ const FacultyDashboard = () => {
     if (id === 'announcements') return navigate('/community');
     setActiveTab(id);
   };
-
-  const [quizzes, setQuizzes] = useState([]);
-  const [quizGenOpen, setQuizGenOpen] = useState(false);
-
-  useEffect(() => {
-    if (activeTab === 'quizzes') {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes`, config).then(r => setQuizzes(r.data)).catch(e => console.error(e));
-    }
-  }, [activeTab, user]);
 
   return (
     <div className="flex h-screen flex-col bg-[#f8faff] dark:bg-[#0b0f1a] overflow-hidden relative">
@@ -369,49 +375,11 @@ const FacultyDashboard = () => {
                   </div>
                 </motion.div>
               )}
-              {activeTab === 'quizzes' && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white uppercase">Active Quizzes</h2>
-                      <p className="text-xs text-indigo-500 font-bold uppercase tracking-wide mt-1">Manage quizzes and track student scores</p>
-                    </div>
-                    <button onClick={() => setQuizGenOpen(true)} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold uppercase tracking-wide shadow-lg hover:bg-indigo-500 transition-all flex items-center gap-2">Create New Quiz <Plus size={14}/></button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {quizzes.map(q => (
-                      <div key={q._id} className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-                        <div className="flex items-center gap-4 mb-4">
-                           <div className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center"><Brain size={18}/></div>
-                           <div>
-                              <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-tight">{q.title}</h3>
-                              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{q.category}</span>
-                           </div>
-                        </div>
-                        <div className="flex items-center gap-6 mt-6">
-                           <div className="flex items-center gap-2">
-                              <Target size={14} className="text-gray-400" />
-                              <span className="text-xs font-semibold text-gray-500 uppercase">{q.totalPoints} Pts</span>
-                           </div>
-                           <div className="flex items-center gap-2">
-                              <Clock size={14} className="text-gray-400" />
-                              <span className="text-xs font-semibold text-gray-500 uppercase">{q.timeLimit} Min</span>
-                           </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
           </AnimatePresence>
         </main>
       </div>
       <AnimatePresence>
         {modalOpen && <ScheduleModal form={modalForm} setForm={setModalForm} onSave={handleSave} onClose={() => setModalOpen(false)} isEdit={isEdit} courses={myCourses} />}
-        {quizGenOpen && <QuizGenerator onClose={() => setQuizGenOpen(false)} onSave={() => {
-          const config = { headers: { Authorization: `Bearer ${user.token}` } };
-          axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes`, config).then(r => setQuizzes(r.data));
-        }} />}
       </AnimatePresence>
     </div>
   );

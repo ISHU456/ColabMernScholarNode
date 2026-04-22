@@ -22,6 +22,7 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
     // Academic Stats
     const [cgpa, setCgpa] = useState(0);
     const [percentage, setPercentage] = useState(0);
+    const [coins, setCoins] = useState(0);
     const [aboutMe, setAboutMe] = useState('');
     const [results, setResults] = useState([]);
 
@@ -42,18 +43,16 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
                 setRollNumber(res.data.student.rollNumber || '');
                 setIsActive(res.data.student.isActive !== false);
                 
-                // Determine which courses this student is currently excluded from
                 const excluded = res.data.allCourses.filter(c => 
                     c.excludedStudents?.some(id => id === studentId || id._id === studentId)
                 ).map(c => c._id);
                 
                 setExcludedCourses(excluded);
                 setAllCourses(res.data.allCourses);
-
-                // Set Results & Stats
                 setResults(res.data.results || []);
                 setCgpa(res.data.student.cgpa || 0);
                 setPercentage(res.data.student.percentage || 0);
+                setCoins(res.data.student.coins || 0);
                 setAboutMe(res.data.student.aboutMe || '');
             } catch (err) {
                 console.error(err);
@@ -68,15 +67,8 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
         setIsSaving(true);
         try {
             await axios.put(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/admin/students/${studentId}/enrollment`, {
-                semester,
-                department,
-                section,
-                rollNumber,
-                isActive: true, // Force active on save/approval
-                excludedCourseIds: excludedCourses,
-                cgpa,
-                percentage,
-                aboutMe
+                semester, department, section, rollNumber, isActive: true, 
+                excludedCourseIds: excludedCourses, cgpa, percentage, coins, aboutMe
             }, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
@@ -189,6 +181,16 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
                                             className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none dark:text-white"
                                         />
                                     </div>
+                                    <div className="col-span-2">
+                                        <label className="text-xs font-bold text-indigo-500 uppercase tracking-wide block mb-1">Scholar Balance (Coins)</label>
+                                        <div className="relative group">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                                            <input 
+                                                type="number" value={coins} onChange={(e) => setCoins(parseInt(e.target.value) || 0)}
+                                                className="w-full bg-indigo-50 dark:bg-indigo-900/10 border-2 border-indigo-500/20 rounded-2xl pl-10 pr-4 py-4 text-sm font-black focus:ring-4 focus:ring-indigo-500/10 outline-none dark:text-white transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </section>
                         </div>
@@ -295,7 +297,6 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
                         <AdminAttendanceInsight userId={studentId} type="student" user={user} />
                     </section>
 
-                    {/* Institutional Certification Hub */}
                     <section className="mt-16 pt-12 border-t-2 border-gray-100 dark:border-gray-800">
                         <div className="flex flex-col gap-1 mb-8">
                             <h3 className="text-[14px] font-semibold uppercase tracking-[0.3em] text-indigo-600 dark:text-indigo-400 flex items-center gap-3">
@@ -342,7 +343,7 @@ const AdminStudentProfileModal = ({ studentId, user, onClose }) => {
                                 <div className="absolute -top-6 -right-6 opacity-5 group-hover:opacity-10 transition-opacity">
                                     <AlertCircle size={120} />
                                 </div>
-                                <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center mb-3 group-hover:bg-rose-100 dark:group-hover:bg-rose-900/40 transition-colors">
+                                <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center mb-3 group-hover:bg-rose-100 dark:group-hover:bg-blue-900/40 transition-colors">
                                     <X className="text-rose-500" size={24} />
                                 </div>
                                 <span className="text-xs font-semibold uppercase tracking-wide text-rose-600 mb-0.5">Reject Submission</span>

@@ -38,6 +38,7 @@ import { getCourseProgressSummary, getTodayKey } from '../../utils/gamificationS
 
 const StudentDashboard = () => {
   const { user } = useSelector((state) => state.auth);
+  const { sessionSeconds } = useSelector((state) => state.gamification);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -212,33 +213,25 @@ const StudentDashboard = () => {
   };
 
   const attendancePercentLast7 = useMemo(() => {
-    const attendanceDates = gamification?.attendanceDates || [];
-    const set = new Set(attendanceDates);
-    const todayKey = getTodayKey();
-    const today = new Date();
-    let attended = 0;
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const k = getTodayKey(d);
-      if (set.has(k)) attended += 1;
+    const last7KeysForRate = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      const day = d.getDay(); 
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
+      const target = new Date(d.setDate(diff + i));
+      return getTodayKey(target);
+    });
+    
+    const set = new Set(gamification?.attendanceDates || []);
+    let attendedCount = 0;
+    for (const k of last7KeysForRate) {
+      if (set.has(k)) attendedCount += 1;
     }
-    return attended / 7;
+    return attendedCount / 7;
   }, [gamification?.attendanceDates]);
 
-  const streakDays = gamification?.streakDays || 0;
+  const streakDays = user?.streak || gamification?.streakDays || 0;
   const xp = gamification?.xp || 0;
   const progressToNext = ((xp % 100) / 100) * 100;
-
-  const pendingTasksCount = useMemo(() => {
-    let pending = 0;
-    for (const t of ASSIGNMENTS_SEED) {
-      const courseProgress = gamification?.progressByCourseId?.[t.course];
-      const completed = new Set(courseProgress?.completedAssignmentIds || []);
-      if (!completed.has(t.id)) pending += 1;
-    }
-    return pending;
-  }, [gamification]);
 
   const activeCoursesCount = useMemo(() => {
     return semesterCourses.filter((c) => {
@@ -321,14 +314,13 @@ const StudentDashboard = () => {
   const totalPages = Math.ceil(leaderboardData.list.length / itemsPerPage);
 
   const last7Keys = useMemo(() => {
-    const keys = [];
-    const today = new Date();
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      keys.push(getTodayKey(d));
-    }
-    return keys;
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      const day = d.getDay(); 
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
+      const target = new Date(d.setDate(diff + i));
+      return getTodayKey(target);
+    });
   }, []);
 
   const weeklyPerformance = useMemo(() => {
@@ -513,6 +505,21 @@ const StudentDashboard = () => {
         </nav>
 
         <div className="p-4 rounded-3xl border border-gray-100 dark:border-gray-800 bg-white/35 dark:bg-gray-900/25">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-primary-500" />
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Protocol Sync</div>
+            </div>
+            <span className="text-[10px] font-black text-primary-600 italic">{Math.floor(sessionSeconds / 60)}:{(sessionSeconds % 60).toString().padStart(2, '0')} / 5:00</span>
+          </div>
+          <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-4">
+             <motion.div 
+               initial={{ width: 0 }}
+               animate={{ width: `${(sessionSeconds / 300) * 100}%` }}
+               className="h-full bg-primary-600 shadow-[0_0_10px_rgba(67,97,238,0.3)]"
+             />
+          </div>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CalendarDays size={18} className="text-emerald-500" />
@@ -547,7 +554,7 @@ const StudentDashboard = () => {
                 <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white capitalize">
                   {menuItems.find((i) => i.id === activeTab)?.label}
                 </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1 font-semibold flex items-center gap-2">
+                <div className="text-gray-600 dark:text-gray-300 mt-1 font-semibold flex items-center gap-2">
                   Welcome back, <span className="uppercase font-extrabold text-primary-600 dark:text-primary-400">{user?.name?.split(' ')[0] || 'Student'}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
                   <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -567,7 +574,7 @@ const StudentDashboard = () => {
                        ) : selectedSem === user?.semester ? (
                          <>
                            <div className="w-1.5 h-1.5 rounded-full bg-primary-600 animate-pulse" />
-                           <span className="text-primary-600 text-xs font-semibold uppercase tracking-wide italic">Active Duty</span>
+                           <span className="text-primary-600 text-xs font-semibold uppercase tracking-wide">Active Duty</span>
                          </>
                        ) : (
                          <>
@@ -577,7 +584,7 @@ const StudentDashboard = () => {
                        )}
                     </div>
                   </div>
-                </p>
+                </div>
                 {!user?.faceRegistered && (
                   <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -598,7 +605,7 @@ const StudentDashboard = () => {
                 )}
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30">
                   <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Badges</div>
                   <div className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{(gamification?.badges || []).length}</div>
@@ -621,11 +628,16 @@ const StudentDashboard = () => {
                   )}
                 </div>
                 <div className="p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Pending</div>
-                  <div className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{pendingTasksCount}</div>
-                  <div className="mt-3 text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Tasks assigned</div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total XP</div>
+                  <div className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{xp}</div>
+                  <div className="mt-3 text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Scholarly Momentum</div>
                 </div>
-                <div className="sm:col-span-2 xl:col-span-1 p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30 backdrop-blur-3xl relative overflow-hidden group">
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Scholar Balance</div>
+                  <div className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{user?.coins || 0}</div>
+                  <div className="mt-3 text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">Coins Available</div>
+                </div>
+                <div className="col-span-full p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30 backdrop-blur-3xl relative overflow-hidden group">
                   {/* Decorative Background Flame */}
                   <div className="absolute top-[-20%] right-[-10%] opacity-5 scale-150 rotate-12 group-hover:rotate-0 transition-transform duration-1000">
                     <Flame size={200} className="text-orange-500 fill-current" />
@@ -648,25 +660,27 @@ const StudentDashboard = () => {
                         </p>
                     </div>
 
-                    <div className="w-full sm:flex-1 max-w-[350px]">
-                        <div className="flex justify-between mb-4 gap-1">
-                           {last7Keys.map((k, i) => {
-                              const attended = new Set(gamification?.attendanceDates || []).has(k);
-                              return (
-                                 <div key={k} className="flex flex-col items-center gap-1.5 flex-1">
-                                    <div className={`w-full aspect-square rounded-lg flex items-center justify-center border-2 transition-all duration-500 max-w-[32px] ${attended ? 'bg-orange-500 border-orange-400 shadow-lg shadow-orange-500/40 text-white' : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 opacity-40'}`}>
-                                       {attended ? <CheckCircle2 size={12} /> : <div className="w-1 h-1 rounded-full bg-current" />}
-                                    </div>
-                                    <span className="text-[7px] font-semibold uppercase tracking-tighter text-gray-500 h-2">D{i+1}</span>
-                                 </div>
-                              );
+                    <div className="w-full sm:flex-1 max-w-[400px]">
+                        <div className="grid grid-cols-7 gap-2 mb-6">
+                           {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => {
+                               const k = last7Keys[i];
+                               const attended = new Set(gamification?.attendanceDates || []).has(k);
+                               return (
+                                  <div key={i} className="flex flex-col items-center gap-2">
+                                     <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500">{day}</span>
+                                     <div className={`w-full aspect-square rounded-xl flex items-center justify-center border-2 transition-all duration-700 ${attended ? 'bg-orange-500 border-orange-400 shadow-xl shadow-orange-500/40 text-white scale-110' : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 opacity-30'}`}>
+                                        {attended ? <CheckCircle2 size={14} className="animate-bounce" /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                     </div>
+                                     <span className="text-[8px] font-black uppercase tracking-tighter text-gray-500 dark:text-gray-400">D{i+1}</span>
+                                  </div>
+                               );
                            })}
                         </div>
-                        <div className="h-2 bg-gray-200/50 dark:bg-gray-800 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700/50">
+                        <div className="h-2.5 bg-gray-200/50 dark:bg-gray-800 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700/50 relative">
                            <motion.div
                              initial={{ width: 0 }}
                              animate={{ width: `${Math.min(100, ((streakDays % 7) || (streakDays > 0 ? 7 : 0)) / 7 * 100)}%` }}
-                             className="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-amber-300 shadow-[0_0_15px_rgba(249,115,22,0.5)]"
+                             className="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-amber-300 shadow-[0_0_20px_rgba(249,115,22,0.6)]"
                            />
                         </div>
                     </div>
@@ -815,7 +829,7 @@ const StudentDashboard = () => {
                     <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">Weekly performance</div>
                     <div className="h-[220px] w-full relative">
                       {isMounted && (
-                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                        <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
                         <AreaChart data={weeklyPerformance}>
                           <defs>
                             <linearGradient id="perfGrad" x1="0" y1="0" x2="0" y2="1">
@@ -838,18 +852,18 @@ const StudentDashboard = () => {
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
                 <div className="glass p-6 rounded-3xl border border-gray-100 dark:border-gray-800 lg:col-span-2">
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
-                      <div className="text-sm font-extrabold text-gray-900 dark:text-white">Course Progress</div>
-                      <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-1">
+                      <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tighter italic">Course Progress Matrix</h2>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mt-2">
                         Lectures (40) + Assignments (30) + Quizzes (30)
-                      </div>
+                      </p>
                     </div>
                     <button
                       onClick={() => setActiveTab('progress')}
-                      className="px-3 py-2 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold text-xs uppercase tracking-wide hover:opacity-90 border border-gray-200 dark:border-gray-800"
+                      className="px-6 py-3 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl border border-white/10"
                     >
-                      Full View
+                      Full Spectrum View
                     </button>
                   </div>
 
@@ -857,34 +871,34 @@ const StudentDashboard = () => {
                     {courseProgressCards.map((card) => {
                       const isBlocked = card.course.excludedStudents?.includes(user?._id);
                       return (
-                        <div key={card.course.id} className={`flex items-center justify-between gap-4 p-4 rounded-3xl border border-gray-100 dark:border-gray-800 bg-white/35 dark:bg-gray-900/25 ${isBlocked ? 'opacity-60' : ''}`}>
-                          <div className="flex items-center gap-4 min-w-0">
+                        <div key={card.course.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 bg-white/35 dark:bg-gray-900/25 transition-all hover:shadow-xl hover:border-primary-500/30 ${isBlocked ? 'opacity-60' : ''}`}>
+                          <div className="flex items-center gap-5 min-w-0 w-full sm:w-auto">
                             <div
-                              className={`w-12 h-12 rounded-3xl flex items-center justify-center text-white shadow-lg shrink-0 ${isBlocked ? 'bg-gray-400' : 'shadow-primary-500/20'}`}
+                              className={`w-14 h-14 rounded-[1.5rem] flex items-center justify-center text-white shadow-lg shrink-0 ${isBlocked ? 'bg-gray-400' : 'shadow-primary-500/20'}`}
                               style={!isBlocked ? { background: `linear-gradient(135deg, ${card.course.accent}, rgba(114,9,183,0.7))` } : {}}
                             >
-                              <BookOpen size={20} />
+                              <BookOpen size={24} />
                             </div>
-                            <div className="min-w-0">
-                              <div className="text-sm font-extrabold text-gray-900 dark:text-white truncate">
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-black text-gray-900 dark:text-white truncate uppercase tracking-tight">
                                 {card.course.id} · {card.course.name}
-                                {isBlocked && <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-semibold uppercase tracking-wide align-middle">Blocked</span>}
+                                {isBlocked && <span className="ml-2 text-[10px] px-2 py-0.5 rounded-lg bg-rose-500 text-white font-black uppercase tracking-widest align-middle">Blocked</span>}
                               </div>
-                              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-1">
+                              <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mt-2">
                                 Videos {card.videoCompleted}/{card.totals.totalVideos} · Docs {card.docsCompleted}/{card.totals.totalDocs}
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-4">
-                            <div className="text-center">
-                              <div className="text-3xl font-extrabold text-gray-900 dark:text-white">{card.summary.progressPercentage}%</div>
-                              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-1">Captured</div>
+                          <div className="flex flex-row sm:flex-row items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-gray-800">
+                            <div className="text-left sm:text-center">
+                              <div className="text-3xl font-black text-gray-900 dark:text-white tabular-nums tracking-tighter">{card.summary.progressPercentage}%</div>
+                              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mt-1">Captured</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col xs:flex-row items-center gap-2">
                                 <button
                                   onClick={() => !isBlocked && navigate(`/self-attendance/${card.course.id}`)}
-                                  className={`px-4 py-2 rounded-2xl font-semibold text-xs uppercase tracking-wide transition shadow-md ${isBlocked || !user?.faceRegistered ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 text-white hover:opacity-90 shadow-green-500/20'}`}
+                                  className={`w-full xs:w-auto px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-md ${isBlocked || !user?.faceRegistered ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed border border-gray-200 dark:border-gray-700' : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/20'}`}
                                   disabled={isBlocked || !user?.faceRegistered}
                                   title={!user?.faceRegistered ? "Register face first" : ""}
                                 >
@@ -892,7 +906,7 @@ const StudentDashboard = () => {
                                 </button>
                                 <button
                                   onClick={() => !isBlocked && navigate(`/course-inner/${card.course.id}`)}
-                                  className={`px-4 py-2 rounded-2xl font-semibold text-xs uppercase tracking-wide transition shadow-md ${isBlocked ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-primary-600 text-white hover:opacity-90 shadow-primary-500/20'}`}
+                                  className={`w-full xs:w-auto px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-md ${isBlocked ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed border border-gray-200 dark:border-gray-700' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/20'}`}
                                 >
                                   {isBlocked ? 'Locked' : 'Open Course'}
                                 </button>

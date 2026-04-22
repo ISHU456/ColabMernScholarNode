@@ -50,7 +50,7 @@ const DepartmentSelection = () => {
         // Use a slight delay to ensure Redux state is updated before navigating
         // and notify other components
         localStorage.setItem('selectedDepartment', JSON.stringify(dept));
-        window.dispatchEvent(new CustomEvent('scholarmatrixdeployment:department_selected', { detail: dept }));
+        window.dispatchEvent(new CustomEvent('scholarmatrix:department_selected', { detail: dept }));
 
         // 3. Navigate to appropriate entry page
         navigate('/courses');

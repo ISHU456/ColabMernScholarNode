@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Book, Users, User, Shield, Building, Activity, Bell, Home, Settings, Search, Zap, CalendarDays, X, Save, TrendingUp, BrainCircuit, CheckCircle, ChevronLeft, ChevronRight, LayoutGrid, Info, UserCheck, Calendar } from 'lucide-react';
+import { Book, Users, User, Shield, Building, Activity, Bell, Home, Settings, Search, Zap, CalendarDays, X, Save, TrendingUp, BrainCircuit, CheckCircle, ChevronLeft, ChevronRight, LayoutGrid, Info, UserCheck, Calendar, Brain, Clock, Target, Trophy, Edit, ShoppingBag, Plus, Trash2 } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -16,17 +16,28 @@ import AdminAccessRequests from '../../components/admin/AdminAccessRequests';
 import AdminPendingTeachers from '../../components/admin/AdminPendingTeachers';
 import AttendanceManager from '../../components/teacher/AttendanceManager';
 import MonthlyRegister from '../../components/teacher/MonthlyRegister';
+import QuizArena from '../../components/student/QuizArena';
+import QuizGenerator from '../../components/teacher/QuizGenerator';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageLoader from '../../components/PageLoader';
+import { useLocation } from 'react-router-dom';
 
+
+// Force update to resolve neural synchronization issues
 const AdminDashboard = () => {
   const { user } = useSelector(state => state.auth);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('adminActiveTab') || 'overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    return tabParam || localStorage.getItem('adminActiveTab') || 'overview';
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(() => parseInt(localStorage.getItem('adminSidebarWidth')) || 280);
   const [isResizing, setIsResizing] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+
   const [stats, setStats] = useState({
     users: 0,
     departments: 0,
@@ -42,6 +53,7 @@ const AdminDashboard = () => {
   });
   const [isMounted, setIsMounted] = useState(false);
   const [quizzes, setQuizzes] = useState([]);
+  const [activeQuizId, setActiveQuizId] = useState(null);
   const [editingQuizId, setEditingQuizId] = useState(null);
   const [quizGenOpen, setQuizGenOpen] = useState(false);
 
@@ -99,6 +111,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     localStorage.setItem('adminActiveTab', activeTab);
+    localStorage.setItem('adminActiveTab', activeTab);
     if (activeTab === 'overview') {
         fetchStats();
         const interval = setInterval(fetchStats, 60000);
@@ -108,6 +121,14 @@ const AdminDashboard = () => {
         fetchQuizzes();
     }
   }, [activeTab, fetchStats, fetchQuizzes]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && menuItems.some(i => i.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
 
   // Resizable Sidebar Logic
   const startResizing = useCallback(() => setIsResizing(true), []);
@@ -133,6 +154,17 @@ const AdminDashboard = () => {
     };
   }, [isResizing, resize, stopResizing]);
 
+  const handleDeleteQuiz = async (id) => {
+    if (!window.confirm("Are you sure you want to decommission this Neural Arena? This action is irreversible.")) return;
+    try {
+      const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/gamification/quizzes/${id}`, config);
+      setQuizzes(quizzes.filter(q => q._id !== id));
+    } catch (err) {
+      alert("Decommissioning failed: " + err.message);
+    }
+  };
+
   const menuItems = [
     { id: 'overview', icon: LayoutGrid, label: 'System Overview' },
     { id: 'users', icon: Users, label: 'User Management Hub' },
@@ -143,7 +175,7 @@ const AdminDashboard = () => {
     { id: 'courses', icon: Book, label: 'Academic Lattice' },
     { id: 'global-alerts', icon: Bell, label: 'Global Broadcasts' },
     { id: 'results-hub', icon: TrendingUp, label: 'Results & Transcripts' },
-    { id: 'quizzes', icon: Brain, label: 'Quiz Management' },
+    { id: 'quizzes', icon: Brain, label: 'Neural Quiz Arena' },
     { id: 'batch-finalization', icon: CheckCircle, label: 'Batch Finalization' },
     { id: 'access-governance', icon: Shield, label: 'Access Governance' },
     { id: 'ai-management', icon: BrainCircuit, label: 'AI Management' },
@@ -394,12 +426,13 @@ const AdminDashboard = () => {
                           </button>
                        ))}
                        <button 
-                         onClick={() => navigate('/admin/ai-management')}
+                         onClick={() => navigate('/master-arena')}
                          className="p-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-[3rem] font-semibold uppercase tracking-[0.3em] text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-indigo-500/30 col-span-2 relative overflow-hidden group/ai"
                        >
                          <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover/ai:scale-x-100 origin-left transition-transform duration-700" />
-                         <span className="relative z-10 flex items-center justify-center gap-3"><BrainCircuit size={20}/> AI Management Terminal</span>
+                         <span className="relative z-10 flex items-center justify-center gap-3 italic"><Brain size={20}/> Access Master Arena</span>
                        </button>
+
                     </div>
                   </motion.div>
 
@@ -491,18 +524,18 @@ const AdminDashboard = () => {
           <motion.div key="quizzes" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white uppercase">Quiz Management</h2>
-                <p className="text-xs text-indigo-500 font-bold uppercase tracking-wide mt-1">Manage and edit platform quizzes</p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white uppercase italic">System Quiz Governance</h2>
+                <p className="text-xs text-indigo-500 font-bold uppercase tracking-wide mt-1">Cross-Sector Achievement Nodes</p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="px-6 py-2.5 bg-indigo-600/10 text-indigo-600 rounded-xl text-xs font-bold uppercase tracking-wide border border-indigo-500/20">
-                   {quizzes.length} Quizzes Active
+                   {quizzes.length} Arenas Active
                 </div>
                 <button 
                   onClick={() => setQuizGenOpen(true)}
                   className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-wide shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center gap-2 active:scale-95"
                 >
-                  <Plus size={16} /> Create Quiz
+                  <Plus size={16} /> Deploy New Quiz
                 </button>
               </div>
             </div>
@@ -545,12 +578,16 @@ const AdminDashboard = () => {
               {quizzes.length === 0 && (
                 <div className="col-span-full p-20 text-center glass rounded-[3rem] border border-gray-100 dark:border-gray-800">
                   <Brain size={48} className="mx-auto text-indigo-500 mb-6 animate-pulse" />
-                  <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Quiz Registry</h3>
-                  <p className="text-xs font-semibold text-gray-400 mt-4 max-w-md mx-auto leading-relaxed">Currently no quizzes are deployed in the system.</p>
+                  <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Global Quiz Registry</h3>
+                  <p className="text-xs font-semibold text-gray-400 mt-4 max-w-md mx-auto leading-relaxed">Administrators can monitor and verify neural quiz nodes. Currently no quizzes are deployed in the system.</p>
                 </div>
               )}
             </div>
           </motion.div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 773977b (Institutional rebranding to ScholarMatrix, gamification updates, and UI enhancements)
         ) : activeTab === 'system' ? (
              <motion.div key="system" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                <AdminSystemSettings user={user} />
