@@ -11,7 +11,7 @@ const OrderManager = () => {
   const { user } = useSelector((state) => state.auth);
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('pending'); // 'all', 'pending', 'delivered', 'cancelled'
+  const [filter, setFilter] = useState('all'); // 'all', 'pending', 'delivered', 'rejected'
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -98,7 +98,7 @@ const OrderManager = () => {
                          {order.prizeTitle || order.prize?.title}
                        </h3>
                        <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-500/10 text-indigo-500 rounded-md border border-indigo-500/20 uppercase tracking-widest">
-                         {order.cost || order.prize?.coinsRequired} SC
+                         {order.cost || order.coinsSpent || order.prize?.coinsRequired} SC
                        </span>
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1">

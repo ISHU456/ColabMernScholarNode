@@ -2,7 +2,7 @@ import React from 'react';
 import { Brain, Target, Clock, ArrowRight, ChevronRight, Zap, Trophy, ShieldCheck, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const QuizHall = ({ quizzes = [], onSelect }) => {
+const QuizHall = ({ quizzes = [], onSelect, isAdmin, onViewAttendees }) => {
   if (quizzes.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-900 rounded-[3rem] p-16 text-center border-2 border-dashed border-gray-100 dark:border-gray-800">
@@ -114,6 +114,18 @@ const QuizHall = ({ quizzes = [], onSelect }) => {
                       +12
                    </div>
                 </div>
+
+                {isAdmin && (
+                   <button 
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       onViewAttendees(quiz._id);
+                     }}
+                     className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20"
+                   >
+                     Attendees
+                   </button>
+                 )}
                 
                 <div className="flex items-center gap-3 group/btn">
                   <span className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 ${quiz.isAttempted ? 'text-emerald-600' : 'text-indigo-600'}`}>

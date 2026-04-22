@@ -17,6 +17,7 @@ import { useGamification } from '../../hooks/useGamification';
 import QuizArena from '../../components/student/QuizArena';
 import CoinIcon from '../../components/CoinIcon';
 import OrderManager from '../../components/admin/OrderManager';
+import AdminQuizAttendees from '../../components/admin/AdminQuizAttendees';
 import { updateProfile } from '../../features/auth/authSlice';
 import { useDispatch } from 'react-redux';
 import { useRef } from 'react';
@@ -31,6 +32,7 @@ const MasterArena = () => {
   const [prizes, setPrizes] = useState([]);
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewingAttendeesId, setViewingAttendeesId] = useState(null);
   const [activeTab, setActiveTab] = useState('hall'); // 'hall' or 'governance'
 
   useEffect(() => {
@@ -192,7 +194,12 @@ const MasterArena = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Left Column: Quiz Hall & Honors */}
           <div className="lg:col-span-8 space-y-12">
-            <QuizHall quizzes={quizzes} onSelect={(id) => navigate(`/quiz-arena/${id}`)} />
+            <QuizHall 
+              quizzes={quizzes} 
+              onSelect={(id) => navigate(`/quiz-arena/${id}`)} 
+              isAdmin={user?.role === 'admin'}
+              onViewAttendees={(id) => setViewingAttendeesId(id)}
+            />
           </div>
 
           {/* Right Column: Leaderboard & History */}
@@ -203,6 +210,15 @@ const MasterArena = () => {
         </div>
         )}
       </div>
+      <AnimatePresence>
+        {viewingAttendeesId && (
+          <AdminQuizAttendees 
+            quizId={viewingAttendeesId} 
+            onClose={() => setViewingAttendeesId(null)} 
+            user={user} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
