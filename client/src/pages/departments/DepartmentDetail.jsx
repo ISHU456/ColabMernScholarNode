@@ -96,11 +96,8 @@ const DepartmentDetail = () => {
               "{dept.tagline || "Innovating the future, educating the leaders of tomorrow."}"
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="px-6 py-3 bg-primary-600 text-white font-semibold text-xs uppercase tracking-wide rounded-xl shadow-2xl shadow-primary-500/30 hover:bg-primary-700 transition-all flex items-center gap-2">
-                Explore Courses <ChevronRight size={14} />
-              </button>
-              <button className="px-6 py-3 glass dark:bg-gray-800/50 text-gray-900 dark:text-white font-semibold text-xs uppercase tracking-wide rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-all">
-                Contact Department
+              <button className="px-8 py-4 bg-primary-600 text-white font-semibold text-xs uppercase tracking-wide rounded-2xl shadow-2xl shadow-primary-500/30 hover:bg-primary-700 transition-all flex items-center gap-2">
+                Explore Curriculum <ChevronRight size={14} />
               </button>
             </div>
           </motion.div>
@@ -680,88 +677,6 @@ const DepartmentDetail = () => {
                 </div>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- CONTACT SECTION --- */}
-      <section className="py-24 bg-primary-600 text-white px-6 md:px-12 lg:px-24 overflow-hidden relative">
-        {/* Decorative Circles */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-900/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-semibold uppercase tracking-tighter mb-8 leading-tight">Get in touch with <br/> our team.</h2>
-              <div className="space-y-6 mb-10">
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide opacity-60">Email Address</p>
-                    <p className="text-base font-bold">{dept.contactDetails?.email || `hod.${code.toLowerCase()}@university.edu`}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide opacity-60">Phone Number</p>
-                    <p className="text-base font-bold">{dept.contactDetails?.phone || "+1 (555) 123-4567"}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide opacity-60">Office Location</p>
-                    <p className="text-base font-bold">{dept.contactDetails?.address || "Engineering Block A, Room 204"}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="aspect-video w-full rounded-[2rem] overflow-hidden bg-gray-200/20 backdrop-blur-sm border-4 border-white/10 shadow-2xl relative group">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] opacity-40 group-hover:opacity-100 transition-opacity">Interactive Map</p>
-                </div>
-                {/* Real map integration would go here */}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-[3rem] p-10 md:p-12 shadow-2xl">
-              <h3 className="text-2xl font-semibold text-gray-900 uppercase tracking-tighter mb-6">Send a <span className="text-primary-600">Message</span></h3>
-              <form className="space-y-5">
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase text-gray-400 tracking-wide ml-4">Full Name</label>
-                    <input type="text" className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-primary-500 transition-all text-gray-900 font-bold text-sm" placeholder="John Doe" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase text-gray-400 tracking-wide ml-4">Email</label>
-                    <input type="email" className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-primary-500 transition-all text-gray-900 font-bold text-sm" placeholder="john@example.com" />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase text-gray-400 tracking-wide ml-4">Subject</label>
-                  <select className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-primary-500 transition-all text-gray-900 font-bold text-sm appearance-none">
-                    <option>Admissions Inquiry</option>
-                    <option>Research Collaboration</option>
-                    <option>Resource Access</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase text-gray-400 tracking-wide ml-4">Message</label>
-                  <textarea rows="3" className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-primary-500 transition-all text-gray-900 font-bold text-sm" placeholder="How can we help you?"></textarea>
-                </div>
-                <button className="w-full py-4 bg-primary-600 text-white font-semibold text-xs uppercase tracking-wide rounded-xl shadow-xl shadow-primary-500/30 hover:bg-primary-700 transition-all flex items-center justify-center gap-2">
-                  Submit Inquiry <ArrowRight size={16} />
-                </button>
-              </form>
-            </div>
           </div>
         </div>
       </section>

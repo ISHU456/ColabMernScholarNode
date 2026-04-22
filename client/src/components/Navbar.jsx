@@ -143,9 +143,9 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 <Link
                   key={finalLink.path}
                   to={finalLink.path}
-                  className={`relative px-4 py-2 group rounded-xl transition-all duration-300 ${finalLink.name === 'AI Mode' ? 'ai-mode-gradient-border mx-2' : ''}`}
+                  className={`relative group transition-all duration-300 ${finalLink.name === 'AI Mode' ? 'ai-mode-button mx-3' : 'px-4 py-2 rounded-xl'}`}
                 >
-                  <span className={`relative z-10 text-xs font-medium uppercase tracking-wide transition-colors duration-300 ${location.pathname === finalLink.path ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'} ${finalLink.name === 'AI Mode' ? 'ai-mode-text-glow' : ''}`}>
+                  <span className={`relative z-10 text-xs font-bold uppercase tracking-wide transition-colors duration-300 ${finalLink.name === 'AI Mode' ? 'ai-mode-text-glow' : (location.pathname === finalLink.path ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white')}`}>
                     {finalLink.name}
                   </span>
 

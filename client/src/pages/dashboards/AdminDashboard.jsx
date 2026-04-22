@@ -41,6 +41,7 @@ const AdminDashboard = () => {
     deptPopulation: []
   });
   const [isMounted, setIsMounted] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -67,10 +68,17 @@ const AdminDashboard = () => {
   }, [user.token]);
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300);
+    setIsFetching(true);
+    const timer = setTimeout(() => setIsFetching(false), 300);
     return () => clearTimeout(timer);
   }, [activeTab]);
+
+  useEffect(() => {
+    // Initial data fetch to clear main loader
+    fetchStats().then(() => {
+        setTimeout(() => setIsLoading(false), 500);
+    });
+  }, [fetchStats]);
 
   useEffect(() => {
     localStorage.setItem('adminActiveTab', activeTab);
@@ -222,8 +230,28 @@ const AdminDashboard = () => {
         </header>
         
         {/* Dynamic Content Core */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-10 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-10 custom-scrollbar relative">
            <AnimatePresence mode="wait">
+             {isFetching ? (
+                <motion.div 
+                  key="component-loader"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 dark:bg-[#030712]/50 backdrop-blur-sm z-50"
+                >
+                   <div className="relative">
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-12 h-12 rounded-xl border-2 border-indigo-500/20 border-t-indigo-500"
+                      />
+                      <Star size={16} className="absolute inset-0 m-auto text-indigo-500 animate-pulse" />
+                   </div>
+                   <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-indigo-500/60">Loading Component</p>
+                </motion.div>
+             ) : (
+                <AnimatePresence mode="wait">
            {activeTab === 'overview' ? (
              <motion.div key="overview" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: "easeOut" }} className="space-y-6 lg:space-y-10 max-w-[1600px] mx-auto">
                
@@ -465,6 +493,8 @@ const AdminDashboard = () => {
                Secure Implementation Area: {activeTab}
              </div>
            )}
+                </AnimatePresence>
+             )}
            </AnimatePresence>
         </main>
       </div>
