@@ -11,7 +11,7 @@ const SessionTracker = () => {
   const { user } = useSelector((state) => state.auth);
   const { sessionSeconds } = useSelector((state) => state.gamification);
   const studentId = user?._id;
-  const { markAttendance } = useGamification(studentId);
+  const { gamification, markAttendance } = useGamification(studentId);
 
   const todayKey = useMemo(() => getTodayKey(), []);
   const storageKey = useMemo(() => `scholar_session_seconds_${studentId}_${todayKey}`, [studentId, todayKey]);
@@ -19,12 +19,20 @@ const SessionTracker = () => {
   // Initial load from localStorage into Redux
   useEffect(() => {
     if (studentId) {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        dispatch(setSessionSeconds(Math.min(300, Number(saved))));
+      // Priority 1: Check if already attended today via gamification store
+      const hasAttendedToday = gamification?.attendanceDates?.includes(todayKey);
+      
+      if (hasAttendedToday) {
+         dispatch(setSessionSeconds(300));
+      } else {
+         // Priority 2: Load from localStorage
+         const saved = localStorage.getItem(storageKey);
+         if (saved) {
+           dispatch(setSessionSeconds(Math.min(300, Number(saved))));
+         }
       }
     }
-  }, [studentId, storageKey, dispatch]);
+  }, [studentId, storageKey, dispatch, gamification?.attendanceDates, todayKey]);
 
   // Persist Redux state to localStorage
   useEffect(() => {
@@ -45,7 +53,8 @@ const SessionTracker = () => {
   }, [studentId, user?.role, sessionSeconds, dispatch]);
 
   const syncStreakToBackend = useCallback(async () => {
-    if (!studentId || !user?.token || sessionSeconds < 300) return;
+    const alreadyAttended = gamification?.attendanceDates?.includes(todayKey);
+    if (!studentId || !user?.token || sessionSeconds < 300 || alreadyAttended) return;
     
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
