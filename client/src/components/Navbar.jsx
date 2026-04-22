@@ -229,7 +229,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                           className="absolute right-0 mt-3 w-60 rounded-2xl bg-white dark:bg-[#0f172a] shadow-2xl border border-gray-100 dark:border-gray-800 p-2 z-[1000]"
                         >
                           <div className="px-3 py-3 border-b border-gray-100 dark:border-gray-800/50 mb-1">
-                             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1 opacity-60">Verified Identity</p>
+                             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1 opacity-60">Verified User</p>
                              <div className="flex items-center justify-between">
                                 <p className="text-xs font-bold text-gray-900 dark:text-white uppercase truncate">{user.name}</p>
                                 <div className="flex items-center gap-1">
@@ -252,7 +252,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                               <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
                                 <UserCircle size={14} />
                               </div>
-                              Identity Settings
+                              Profile Settings
                             </Link>
 
                             {/* 2nd - Dashboard */}

@@ -268,7 +268,7 @@ const AdminDashboard = () => {
                        <LayoutGrid size={120} className="text-indigo-500" />
                     </div>
                     <div className="flex items-center justify-between mb-10 relative z-10">
-                       <h3 className="text-sm font-semibold uppercase tracking-[0.3em] dark:text-white italic">Identity Demographics</h3>
+                       <h3 className="text-sm font-semibold uppercase tracking-[0.3em] dark:text-white">User Demographics</h3>
                        <div className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
                     </div>
                     <div className="h-[300px] w-full relative z-10">
@@ -380,7 +380,7 @@ const AdminDashboard = () => {
                      <div className="absolute bottom-0 right-0 p-10 opacity-5 -mb-5 -mr-5">
                         <Users size={180} />
                      </div>
-                     <h3 className="text-sm font-semibold uppercase tracking-[0.3em] dark:text-white mb-10 italic">Identity Ignition Stream</h3>
+                     <h3 className="text-sm font-semibold uppercase tracking-[0.3em] dark:text-white mb-10">Recent Activity</h3>
                      <div className="space-y-6 relative z-10">
                         {stats.recentUsers && stats.recentUsers.length > 0 ? stats.recentUsers.slice(0, 6).map((item, i) => (
                           <motion.div 

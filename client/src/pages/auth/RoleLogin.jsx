@@ -168,7 +168,7 @@ const RoleLogin = () => {
               {roleType} Portal
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-              {view === 'login' ? 'Institutional Sign In' : view === 'register' ? 'Member Registration' : 'Account Recovery'}
+              {view === 'login' ? 'Sign In' : view === 'register' ? 'Register' : 'Reset Password'}
             </p>
           </div>
 
