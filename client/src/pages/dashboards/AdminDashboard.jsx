@@ -465,8 +465,7 @@ const AdminDashboard = () => {
                Secure Implementation Area: {activeTab}
              </div>
            )}
-                </AnimatePresence>
-           </AnimatePresence>
+          </AnimatePresence>
         </main>
       </div>
 
