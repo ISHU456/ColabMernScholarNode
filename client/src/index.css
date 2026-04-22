@@ -108,8 +108,11 @@ body {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  /* optimization: isolate blur effects */
+  /* optimization: isolate blur effects and contain paint */
   isolation: isolate;
+  contain: layout style;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .dark .glass {
@@ -138,13 +141,28 @@ body {
   border-radius: 4px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #1e293b;
+  border: 2px solid #0f172a;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #334155;
+}
+
+/* Performance Layer Isolation */
+.perf-layer {
+  contain: content;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 100px;
+}
+
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
 }
 
 .animate-float {

@@ -603,8 +603,8 @@ const StudentDashboard = () => {
                 )}
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 perf-layer">
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30 gpu-accelerated">
                   <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Badges</div>
                   <div className="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{(gamification?.badges || []).length}</div>
                   {earnedBadgeMeta.length ? (
@@ -785,7 +785,7 @@ const StudentDashboard = () => {
                   </div>
                 </div>
 
-                <div className="glass p-6 rounded-3xl border border-gray-100 dark:border-gray-800 lg:col-span-2">
+                <div className="glass p-6 rounded-3xl border border-gray-100 dark:border-gray-800 lg:col-span-2 perf-layer">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2">
