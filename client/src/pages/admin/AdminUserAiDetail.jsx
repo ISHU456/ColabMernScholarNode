@@ -49,9 +49,9 @@ const AdminUserAiDetail = () => {
         ...prev,
         user: { ...prev.user, credits: res.data.currentCredits }
       }));
-      alert(`Successfully injected ${amount} neural credits.`);
+      alert(`Successfully added ${amount} credits.`);
     } catch (err) {
-      alert("Failed to synchronize credits.");
+      alert("Failed to update credits.");
     }
   };
 
@@ -68,11 +68,11 @@ const AdminUserAiDetail = () => {
 
   if (isLoading) return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-950">
-      <PageLoader message="Initializing Neural Audit" />
+      <PageLoader message="Loading User Audit" />
     </div>
   );
 
-  if (!data) return <div className="p-10 text-white">Neural Subject Not Found.</div>;
+  if (!data) return <div className="p-10 text-white">User Not Found.</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] p-8">
@@ -188,7 +188,7 @@ const AdminUserAiDetail = () => {
                       </div>
                       <h4 className="text-xs font-semibold text-gray-900 dark:text-white uppercase leading-tight line-clamp-2">{chat.title}</h4>
                       <p className="text-xs font-bold text-gray-500 mt-3 flex items-center gap-2">
-                         {chat.messages.length} neural nodes preserved
+                         {chat.messages.length} messages saved
                       </p>
                       <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800/50 flex flex-col gap-2">
                         {chat.messages.slice(-2).map((m, j) => (

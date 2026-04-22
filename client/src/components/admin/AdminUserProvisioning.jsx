@@ -138,7 +138,7 @@ const AdminUserManagement = ({ user }) => {
 
                     <div className="relative group w-full xl:w-96">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors" size={16} />
-                        <input type="text" placeholder="QUERY IDENTITY NAME OR EMAIL..." value={search} onChange={(e) => setSearch(e.target.value)}
+                        <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-12 pr-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl text-xs font-semibold uppercase tracking-wide focus:ring-2 focus:ring-red-500/20 transition-all shadow-inner outline-none dark:text-white" />
                     </div>
                 </div>
@@ -146,7 +146,7 @@ const AdminUserManagement = ({ user }) => {
                 <div className="pt-6 border-t border-gray-50 dark:border-gray-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div className="space-y-3">
                         <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-2 mb-1">
-                            <Building size={12}/> Academic Sector
+                            <Building size={12}/> Department
                         </span>
                         <div className="flex flex-wrap gap-2">
                              {['all', 'CSE', 'ECE', 'ME', 'CE', 'IT', 'AI'].map(dept => (
@@ -162,7 +162,7 @@ const AdminUserManagement = ({ user }) => {
                         <>
                         <div className="space-y-3">
                             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-2 mb-1">
-                                <Filter size={12}/> Semester Cycle
+                                <Filter size={12}/> Semester
                             </span>
                             <div className="flex flex-wrap gap-2">
                                 {['all', 1, 2, 3, 4, 5, 6, 7, 8].map(sem => (
@@ -175,7 +175,7 @@ const AdminUserManagement = ({ user }) => {
                         </div>
                         <div className="space-y-3">
                             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-2 mb-1">
-                                <Target size={12}/> Target Section
+                                <Target size={12}/> Section
                             </span>
                             <div className="flex flex-wrap gap-2">
                                 {['all', 'A', 'B'].map(sec => (
@@ -196,10 +196,10 @@ const AdminUserManagement = ({ user }) => {
                     <table className="w-full text-left border-separate border-spacing-0">
                         <thead className="sticky top-0 z-20 transition-all">
                             <tr className="bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md">
-                                <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400 first:rounded-tl-[32px]">Identity Name</th>
+                                <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400 first:rounded-tl-[32px]">Name</th>
                                 <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400">Department</th>
                                 <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400">Status</th>
-                                <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400 text-right last:rounded-tr-[32px]">Commands</th>
+                                <th className="px-8 py-5 text-xs font-semibold uppercase tracking-wide text-gray-400 text-right last:rounded-tr-[32px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-gray-800">

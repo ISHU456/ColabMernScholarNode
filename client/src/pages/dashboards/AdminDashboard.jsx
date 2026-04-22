@@ -118,7 +118,7 @@ const AdminDashboard = () => {
     { id: 'results-hub', icon: TrendingUp, label: 'Results & Transcripts' },
     { id: 'batch-finalization', icon: CheckCircle, label: 'Batch Finalization' },
     { id: 'access-governance', icon: Shield, label: 'Access Governance' },
-    { id: 'ai-management', icon: BrainCircuit, label: 'Neural Governance Hub' },
+    { id: 'ai-management', icon: BrainCircuit, label: 'AI Management' },
     { id: 'system', icon: Settings, label: 'System Settings' },
   ];
 
@@ -144,7 +144,7 @@ const AdminDashboard = () => {
                  <Shield size={20} className="animate-pulse" />
               </div>
               <div className="truncate">
-                 <h2 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-tighter">Neural Admin</h2>
+                 <h2 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-tighter">System Admin</h2>
                  <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide italic">Governance Node</p>
               </div>
               <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden ml-auto p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500"><X size={20}/></button>
@@ -233,10 +233,10 @@ const AdminDashboard = () => {
                {/* Dashboard Stats Deck */}
                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                  {[
-                   { label: 'Total Identities', value: stats.users, icon: Users, color: 'indigo', detail: 'Across all vectors' },
-                   { label: 'Academic Sectors', value: stats.departments, icon: Building, color: 'violet', detail: 'Departmental nodes' },
-                   { label: 'Active Requests', value: stats.pendingApprovals, icon: Zap, color: 'amber', detail: 'Awaiting protocol sync' },
-                   { label: 'Faculty Presence', value: `${stats.attendance}%`, icon: Activity, color: 'emerald', detail: 'Live participation' },
+                   { label: 'Total Users', value: stats.users, icon: Users, color: 'indigo', detail: 'Across all vectors' },
+                   { label: 'Departments', value: stats.departments, icon: Building, color: 'violet', detail: 'Departmental nodes' },
+                   { label: 'Pending Requests', value: stats.pendingApprovals, icon: Zap, color: 'amber', detail: 'Awaiting protocol sync' },
+                   { label: 'Faculty Status', value: `${stats.attendance}%`, icon: Activity, color: 'emerald', detail: 'Live participation' },
                  ].map((s, idx) => (
                    <motion.div 
                      key={s.label} 
@@ -249,8 +249,8 @@ const AdminDashboard = () => {
                      <div className="flex justify-between items-start relative z-10">
                        <div>
                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">{s.label}</p>
-                         <h3 className="text-4xl font-semibold dark:text-white tabular-nums tracking-tighter italic">{s.value}</h3>
-                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-2 italic">{s.detail}</p>
+                         <h3 className="text-4xl font-semibold dark:text-white tabular-nums tracking-tighter">{s.value}</h3>
+                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-2">{s.detail}</p>
                        </div>
                        <div className={`p-4 rounded-2xl bg-${s.color}-50 dark:bg-white/5 text-${s.color}-500 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 shadow-sm`}>
                          <s.icon size={28} strokeWidth={2.5} />
@@ -370,7 +370,7 @@ const AdminDashboard = () => {
                          className="p-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-[3rem] font-semibold uppercase tracking-[0.3em] text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-indigo-500/30 col-span-2 relative overflow-hidden group/ai"
                        >
                          <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover/ai:scale-x-100 origin-left transition-transform duration-700" />
-                         <span className="relative z-10 flex items-center justify-center gap-3 italic"><BrainCircuit size={20}/> Neural Governance Terminal</span>
+                         <span className="relative z-10 flex items-center justify-center gap-3"><BrainCircuit size={20}/> AI Management Terminal</span>
                        </button>
                     </div>
                   </motion.div>

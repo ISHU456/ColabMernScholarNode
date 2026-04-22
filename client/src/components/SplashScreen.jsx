@@ -56,7 +56,7 @@ const SplashScreen = () => {
             ScholarMatrix
           </h1>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">
-            Initalizing Academic Environment
+            Loading ScholarMatrix
           </p>
           
           {/* Loading bar container */}

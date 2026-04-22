@@ -87,7 +87,7 @@ const ProtectedRoute = ({ children, allowedRoles, checkDept = true }) => {
     return (
       <LockedOverlay 
         title="Unauthorized Access" 
-        message="Your current role clearance does not permit entry to this sector." 
+        message="You do not have permission to access this page." 
       />
     );
   }
@@ -128,18 +128,18 @@ const AppContent = () => {
     localStorage.getItem('theme') === 'dark' || 
     (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
   );
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   useEffect(() => {
     // Advanced loading logic: Wait for window load AND a minimum cinematic delay
     const handleLoad = () => {
       // Small additional delay after load for smooth entry
-      setTimeout(() => setIsInitializing(false), 300);
+      setIsInitializing(false);
     };
 
     if (document.readyState === 'complete') {
-      // If already loaded, still show splash for at least 0.6 seconds for branding
-      const timer = setTimeout(() => setIsInitializing(false), 600);
+      // Short delay for branding, then enter
+      const timer = setTimeout(() => setIsInitializing(false), 400);
       return () => clearTimeout(timer);
     } else {
       window.addEventListener('load', handleLoad);
@@ -198,17 +198,7 @@ const AppContent = () => {
 
   return (
     <div className="h-screen flex flex-col bg-slate-50 dark:bg-[#030712] transition-colors duration-300 overflow-hidden">
-      <AnimatePresence mode="wait">
-        {isInitializing && <SplashScreen key="splash" />}
-      </AnimatePresence>
-
-      {!isInitializing && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="flex flex-col h-full"
-        >
+        <div className="flex flex-col h-full">
           <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <GlobalAlertMarquee />
       <main className="flex-grow flex flex-col relative w-full overflow-y-auto smooth-scroll min-h-0 bg-transparent gpu-accelerated">
@@ -399,8 +389,7 @@ const AppContent = () => {
       <NotificationListener />
           <AchievementToaster />
           {!isAIMode && <Chatbot />}
-        </motion.div>
-      )}
+        </div>
     </div>
   );
 };

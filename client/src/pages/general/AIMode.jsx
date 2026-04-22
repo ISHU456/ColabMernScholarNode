@@ -24,7 +24,7 @@ const AIMode = () => {
   const [messages, setMessages] = useState([
     { 
       id: 1, 
-      text: "# Neural Overdrive Active\n\nWelcome to the specialized **AI Beast Mode**. I am your high-performance academic core. My logic processors are peaked for complex derivation and strategic research.\n\n**Warning:** Every query consumes 1 Neural Credit. Use them wisely.", 
+      text: "# AI Mode Active\n\nWelcome to **AI Mode**. I am your advanced academic assistant, ready to help with complex research and study tasks.\n\n**Note:** Every query uses 1 AI Credit.", 
       sender: 'bot',
       timestamp: new Date()
     }
@@ -70,7 +70,7 @@ const AIMode = () => {
         aiCreditsRequested: res.data.aiCreditsRequested 
       }));
     } catch (err) {
-      console.error("Failed to sync neural profile");
+      console.error("Failed to sync AI profile");
     }
   };
 
@@ -347,7 +347,7 @@ const AIMode = () => {
             <div className={`px-5 py-2.5 rounded-2xl border ${credits > 0 ? 'bg-indigo-600/10 border-indigo-500/20' : 'bg-rose-600/10 border-rose-500/20'} flex items-center gap-3`}>
                {credits > 0 ? <Zap size={14} className="text-indigo-400" /> : <ZapOff size={14} className="text-rose-400" />}
                <span className={`text-xs font-semibold uppercase tracking-wide ${credits > 0 ? 'text-indigo-400' : 'text-rose-400'}`}>
-                 {user?.role === 'teacher' ? 'Faculty Focus: ' : 'Neural Bank: '} {credits} Credits
+                 {user?.role === 'teacher' ? 'Faculty Focus: ' : 'AI Balance: '} {credits} Credits
                </span>
             </div>
           </div>
@@ -360,7 +360,7 @@ const AIMode = () => {
              {/* Neural Logs Section */}
              <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 flex items-center gap-2">
-                  <Database size={14} className="text-indigo-400" /> Neural Logs
+                  <Database size={14} className="text-indigo-400" /> AI Logs
                 </h3>
              </div>
              

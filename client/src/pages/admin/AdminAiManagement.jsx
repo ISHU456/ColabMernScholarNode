@@ -46,16 +46,16 @@ const AdminAiManagement = () => {
             <ArrowLeft size={14} /> Back to Dashboard
           </button>
           <h1 className="text-3xl font-semibold text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
-            <BrainCircuit className="text-indigo-600" size={32} /> Neural Core Governance
+            <BrainCircuit className="text-indigo-600" size={32} /> AI Control Center
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 font-semibold">Monitoring high-performance AI interactions across the sector.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 font-semibold">Monitoring AI usage across the platform.</p>
         </div>
 
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input 
             type="text"
-            placeholder="Search Subject ID or Identifier..."
+            placeholder="Search name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-12 pr-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl w-full md:w-80 outline-none focus:ring-2 ring-indigo-500/20 transition-all font-bold"
@@ -66,7 +66,7 @@ const AdminAiManagement = () => {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <Loader2 size={40} className="animate-spin text-indigo-600" />
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Decrypting usage logs...</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Loading usage history...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -92,11 +92,11 @@ const AdminAiManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Total Pulses</p>
+                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Total Queries</p>
                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{u.totalUsage || 0}</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Credits Pool</p>
+                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">AI Balance</p>
                    <p className="text-xl font-semibold text-indigo-500">{u.credits || 0}</p>
                 </div>
               </div>
@@ -109,7 +109,7 @@ const AdminAiManagement = () => {
                   </span>
                 </div>
                 <div className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 text-xs font-semibold uppercase tracking-wide rounded-full">
-                  {u.lastAction ? (u.lastAction === 'analyze' ? 'Deep Scan' : 'Query') : 'Identity Idle'}
+                  {u.lastAction ? (u.lastAction === 'analyze' ? 'Deep Scan' : 'Query') : 'User Idle'}
                 </div>
               </div>
             </motion.div>
