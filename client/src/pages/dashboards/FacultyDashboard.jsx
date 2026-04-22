@@ -315,13 +315,13 @@ const FacultyDashboard = () => {
             <div className="relative z-10 drop-shadow-2xl">
               <div className="flex items-center gap-4 mb-5">
                  <div className="w-16 h-[2px] bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-                 <span className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.6em] italic drop-shadow-md">Faculty Governance Matrix</span>
+                 <span className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.6em] drop-shadow-md">Faculty Dashboard</span>
               </div>
               <h1 className="text-4xl lg:text-7xl font-semibold text-white uppercase tracking-tighter leading-none mb-4 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                 Welcome, <span className="text-indigo-400">Professor</span>
               </h1>
               <p className="text-gray-300/80 text-xs lg:text-xs font-semibold uppercase tracking-[0.3em] mb-6 max-w-xl leading-relaxed italic border-l-2 border-indigo-500/30 pl-4">
-                Orchestrating institutional excellence through high-performance academic governance and identity node management.
+                Manage your courses, attendance, and students efficiently from one central place.
               </p>
               
               <div className="flex items-center gap-5">
@@ -350,8 +350,8 @@ const FacultyDashboard = () => {
              {activeTab === 'schedule' && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold uppercase tracking-tighter dark:text-white italic">Academic Schedule Matrix</h2>
-                    <button onClick={openAdd} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold uppercase tracking-wide shadow-lg shadow-indigo-600/20 hover:opacity-90 transition-all flex items-center gap-2">Induct Session <Plus size={14}/></button>
+                    <h2 className="text-xl font-semibold uppercase tracking-tighter dark:text-white">Class Schedule</h2>
+                    <button onClick={openAdd} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold uppercase tracking-wide shadow-lg shadow-indigo-600/20 hover:opacity-90 transition-all flex items-center gap-2">Add Session <Plus size={14}/></button>
                   </div>
                   <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
                     {['All', ...DAYS].map(d => (
@@ -373,10 +373,10 @@ const FacultyDashboard = () => {
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white uppercase italic">Active Neural Quiz Nodes</h2>
-                      <p className="text-xs text-indigo-500 font-bold uppercase tracking-wide mt-1">Gamification & Achievement Interface</p>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white uppercase">Active Quizzes</h2>
+                      <p className="text-xs text-indigo-500 font-bold uppercase tracking-wide mt-1">Manage quizzes and track student scores</p>
                     </div>
-                    <button onClick={() => setQuizGenOpen(true)} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold uppercase tracking-wide shadow-lg hover:bg-indigo-500 transition-all flex items-center gap-2">Deploy New Quiz <Plus size={14}/></button>
+                    <button onClick={() => setQuizGenOpen(true)} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold uppercase tracking-wide shadow-lg hover:bg-indigo-500 transition-all flex items-center gap-2">Create New Quiz <Plus size={14}/></button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {quizzes.map(q => (

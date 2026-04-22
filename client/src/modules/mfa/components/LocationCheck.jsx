@@ -69,8 +69,8 @@ const LocationCheck = () => {
 
     return (
         <div className="flex flex-col items-center animate-fade-in p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md border border-slate-100 dark:border-slate-700">
-            <div className="text-xl font-bold mb-2 text-center text-slate-800 dark:text-white">Spatial Verification</div>
-            <p className="text-slate-500 dark:text-slate-400 text-center mb-6 text-sm">Validating device location grid...</p>
+            <div className="text-xl font-bold mb-2 text-center text-slate-800 dark:text-white">Location Check</div>
+            <p className="text-slate-500 dark:text-slate-400 text-center mb-6 text-sm">Verifying your current location...</p>
 
             <div className={`relative p-8 rounded-full transition-all duration-300 mb-6 ${status === 'success' ? 'bg-green-50 dark:bg-green-950/20' : 'bg-blue-50 dark:bg-blue-950/20'}`}>
                 <div className={`p-6 rounded-full ${status === 'success' ? 'bg-green-100 text-green-600 dark:bg-green-900/40' : 'bg-blue-100 text-blue-600 dark:bg-blue-900/40'}`}>
@@ -93,26 +93,18 @@ const LocationCheck = () => {
                        <span>Verification Blocked</span>
                     </div>
                     <button 
-                        onClick={retry}
-                        className="px-6 py-2 bg-slate-800 text-white text-xs font-semibold uppercase tracking-wide rounded-lg hover:bg-slate-700 transition-all shadow-md"
+                        onClick={handleDevBypass}
+                        className="px-6 py-2 bg-indigo-600 text-white text-xs font-semibold uppercase tracking-wide rounded-lg hover:bg-indigo-500 transition-all shadow-md"
                     >
-                        Try Again
+                        Skip & Use Default Location
                     </button>
                   </div>
                 )}
             </div>
             
-            {(status === 'denied' || status === 'requesting') && (
-                <button 
-                    onClick={handleDevBypass}
-                    className="mb-6 text-xs font-semibold text-slate-300 hover:text-blue-500 uppercase tracking-wide transition-colors border border-transparent hover:border-blue-500/20 px-3 py-1 rounded-md"
-                >
-                    [ Dev Bypass: Institutional Link ]
-                </button>
-            )}
 
             <p className="text-center text-slate-400 text-xs px-6 leading-relaxed">
-              Security Protocol: Location data is strictly used for one-time identity verification and never persisted thereafter.
+              Privacy Note: Your location is only used once to verify you are on campus and is not stored.
             </p>
         </div>
     );

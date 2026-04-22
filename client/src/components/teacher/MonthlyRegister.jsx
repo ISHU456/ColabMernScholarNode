@@ -68,21 +68,31 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
       setIsLoading(true);
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const studentsRes = await axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/courses/${selectedCourse.code}/students?semester=${semester}&section=${section}`, config);
-        setStudents(studentsRes.data);
         const year = selectedDate.getFullYear();
         const month = selectedDate.getMonth();
         const startDate = new Date(year, month, 1).toISOString();
         const endDate = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
-        const attendanceRes = await axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/attendance/course/${selectedCourse._id}?startDate=${startDate}&endDate=${endDate}&semester=${semester}&section=${section}`, config);
+
+        // Fetch everything in parallel
+        const [studentsRes, attendanceRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/courses/${selectedCourse.code}/students?semester=${semester}&section=${section}`, config),
+          axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/attendance/course/${selectedCourse._id}?startDate=${startDate}&endDate=${endDate}&semester=${semester}&section=${section}`, config)
+        ]);
+
+        setStudents(studentsRes.data);
         setAttendanceRecords(attendanceRes.data.attendanceRecords || attendanceRes.data);
+
+        // Fetch daily bulk attendance only if students exist
         if (studentsRes.data.length > 0) {
             const studentIds = studentsRes.data.map(s => s._id).join(',');
-            const dailyRes = await axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/attendance/daily/monthly-bulk?studentIds=${studentIds}&month=${selectedDate.getMonth() + 1}&year=${selectedDate.getFullYear()}`, config);
+            const dailyRes = await axios.get(`${import.meta.env.VITE_API_URL || 'https://scholarmatrixdeployment-server.onrender.com'}/api/attendance/daily/monthly-bulk?studentIds=${studentIds}&month=${month + 1}&year=${year}`, config);
             setDailyAttendanceRecords(dailyRes.data);
         }
-      } catch (error) { console.error('Error fetching register data:', error); }
-      finally { setIsLoading(false); }
+      } catch (error) { 
+        console.error('Error fetching register data:', error); 
+      } finally { 
+        setIsLoading(false); 
+      }
     };
     fetchData();
   }, [selectedCourse, selectedDate, semester, section, user.token]);
@@ -170,7 +180,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
                 </div>
                 <div className="min-w-0 flex-1">
                    <h2 className="text-lg lg:text-xl font-semibold text-gray-900 dark:text-white uppercase tracking-tighter">Attendance Register</h2>
-                   <p className="text-xs lg:text-xs font-semibold text-gray-400 uppercase tracking-wide mt-0.5 lg:mt-1 italic">Administrative Record System</p>
+                   <p className="text-xs lg:text-xs font-semibold text-gray-400 uppercase tracking-wide mt-0.5 lg:mt-1">Attendance History</p>
                 </div>
             </div>
 
@@ -203,7 +213,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
 
                   {isAuthorized && (
                     <button onClick={exportPDF} disabled={students.length === 0} className="px-6 py-3.5 rounded-xl lg:rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold uppercase tracking-wide transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3 shrink-0">
-                      <Download size={16}/> Protocol Export
+                      <Download size={16}/> Export PDF
                     </button>
                   )}
                </div>
@@ -233,7 +243,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
             <thead className="sticky top-0 z-10 bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-700">
               <tr>
                 <th className="px-4 lg:px-6 py-4 text-left min-w-[100px] lg:min-w-[120px] sticky left-0 z-20 bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 text-xs lg:text-xs font-semibold uppercase tracking-wide text-gray-400">Roll No</th>
-                <th className="px-4 lg:px-6 py-4 text-left min-w-[160px] lg:min-w-[200px] sticky left-[100px] lg:left-[120px] z-20 bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 text-xs lg:text-xs font-semibold uppercase tracking-wide text-gray-400">Identity</th>
+                <th className="px-4 lg:px-6 py-4 text-left min-w-[160px] lg:min-w-[200px] sticky left-[100px] lg:left-[120px] z-20 bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 text-xs lg:text-xs font-semibold uppercase tracking-wide text-gray-400">Student Name</th>
                 {daysInMonth.map(day => (<th key={day} className="px-2 py-4 min-w-[35px] lg:min-w-[40px] border-r border-gray-100 dark:border-gray-700 text-xs lg:text-xs font-semibold uppercase text-gray-500 tabular-nums">{day}</th>))}
               </tr>
             </thead>
@@ -243,7 +253,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
                 return (
                   <tr key={student._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all border-b border-gray-100 dark:border-gray-800">
                     <td className="px-4 lg:px-6 py-3 sticky left-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 font-semibold text-xs lg:text-xs text-gray-400">{student.rollNumber}</td>
-                    <td className="px-4 lg:px-6 py-3 sticky left-[100px] lg:left-[120px] z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 font-semibold text-xs lg:text-xs uppercase cursor-pointer italic truncate max-w-[160px] lg:max-w-none" onClick={() => setViewingStudentId(student._id)}>{student.name}</td>
+                    <td className="px-4 lg:px-6 py-3 sticky left-[100px] lg:left-[120px] z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-r border-gray-100 dark:border-gray-700 font-semibold text-xs lg:text-xs uppercase cursor-pointer truncate max-w-[160px] lg:max-w-none" onClick={() => setViewingStudentId(student._id)}>{student.name}</td>
                     {daysInMonth.map(day => {
                        const status = gridData[day] || '';
                        return (
@@ -270,10 +280,10 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
             className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/20 dark:bg-slate-900/40">
             <div className="bg-white dark:bg-slate-800 p-10 rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center max-w-md mx-4 leading-none">
               <div className="w-20 h-20 rounded-[2rem] bg-rose-500/10 flex items-center justify-center text-rose-500 mb-6 border border-rose-500/20 shadow-xl overflow-hidden"><Shield size={32} /></div>
-              <h3 className="text-xl font-semibold italic uppercase tracking-tighter mb-3">Historical Blockade</h3>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide leading-relaxed">You are not authorized to view this register sector. This grid is encrypted for teachers not explicitly assigned to <span className="text-rose-500">{selectedCourse?.name || 'this course'}</span>.</p>
+              <h3 className="text-xl font-semibold uppercase tracking-tighter mb-3">Access Restricted</h3>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide leading-relaxed">You do not have permission to view this register. Please contact the HOD for access.</p>
               <div className="mt-8 flex flex-col gap-2 w-full">
-                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3"><Activity size={14} className="text-slate-400"/><p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Contact HOD for decryption keys</p></div>
+                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3"><Activity size={14} className="text-slate-400"/><p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Request access from department head</p></div>
               </div>
             </div>
           </motion.div>

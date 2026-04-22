@@ -201,18 +201,18 @@ const AdminDashboard = () => {
                 <h1 className="text-2xl font-semibold text-slate-900 dark:text-white uppercase tracking-tighter italic">
                   {menuItems.find(i=>i.id===activeTab)?.label}
                 </h1>
-                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mt-0.5">Administrative Grid Interface</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mt-0.5">Admin Control Panel</p>
               </div>
            </div>
            
            <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-3 bg-slate-50 dark:bg-white/5 px-5 py-2.5 rounded-2xl border border-slate-100 dark:border-white/5 focus-within:ring-2 focus-within:ring-indigo-500/30 transition-all duration-300">
                 <Search size={16} className="text-slate-400" />
-                <input type="text" placeholder="Global Sector Search..." className="bg-transparent text-xs font-semibold uppercase tracking-wide outline-none text-slate-900 dark:text-white w-48" />
+                <input type="text" placeholder="Search across system..." className="bg-transparent text-xs font-semibold uppercase tracking-wide outline-none text-slate-900 dark:text-white w-48" />
               </div>
               <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800/60">
                  <div className="text-right hidden sm:block">
-                    <p className="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-tighter">Root Administrator</p>
+                    <p className="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-tighter">System Administrator</p>
                     <p className="text-xs font-semibold text-emerald-500 uppercase tracking-wide italic">{user.department}</p>
                  </div>
                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 p-0.5 shadow-lg shadow-indigo-500/20">
@@ -233,10 +233,10 @@ const AdminDashboard = () => {
                {/* Dashboard Stats Deck */}
                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                  {[
-                   { label: 'Total Users', value: stats.users, icon: Users, color: 'indigo', detail: 'Across all vectors' },
-                   { label: 'Departments', value: stats.departments, icon: Building, color: 'violet', detail: 'Departmental nodes' },
-                   { label: 'Pending Requests', value: stats.pendingApprovals, icon: Zap, color: 'amber', detail: 'Awaiting protocol sync' },
-                   { label: 'Faculty Status', value: `${stats.attendance}%`, icon: Activity, color: 'emerald', detail: 'Live participation' },
+                   { label: 'Total Users', value: stats.users, icon: Users, color: 'indigo', detail: 'All active accounts' },
+                   { label: 'Departments', value: stats.departments, icon: Building, color: 'violet', detail: 'Academic departments' },
+                   { label: 'Pending Requests', value: stats.pendingApprovals, icon: Zap, color: 'amber', detail: 'Awaiting approval' },
+                   { label: 'Faculty Presence', value: `${stats.attendance}%`, icon: Activity, color: 'emerald', detail: 'Current attendance' },
                  ].map((s, idx) => (
                    <motion.div 
                      key={s.label} 
