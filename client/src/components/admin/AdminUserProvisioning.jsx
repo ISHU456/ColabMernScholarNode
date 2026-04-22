@@ -105,7 +105,7 @@ const AdminUserManagement = ({ user }) => {
                     <div className="space-y-4 w-full">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
                             <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 sm:pb-0 w-full sm:w-auto">
-                                {['all', 'teacher', 'student', 'hod', 'admin'].map(r => (
+                                {['all', 'teacher', 'student', 'admin'].map(r => (
                                     <button key={r} onClick={() => {
                                         setRole(r);
                                         if (r !== 'student' && r !== 'all') {
@@ -266,12 +266,6 @@ const AdminUserManagement = ({ user }) => {
                                                 >
                                                     <Shield size={14} /> ACTIVATE
                                                 </button>
-                                            )}
-                                            {u.role === 'teacher' && u.isActive === true && (
-                                                <button onClick={() => handleRoleUpdate(u._id, 'hod')} className="hidden sm:block px-3 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 border border-amber-200 rounded-xl text-xs font-semibold uppercase tracking-wide hover:bg-amber-100 transition-all">PROMOTE</button>
-                                            )}
-                                            {u.role === 'hod' && (
-                                                <button onClick={() => handleRoleUpdate(u._id, 'teacher')} className="hidden sm:block px-3 py-2 bg-gray-50 dark:bg-gray-900/20 text-gray-600 border border-gray-200 rounded-xl text-xs font-semibold uppercase tracking-wide hover:bg-gray-100 transition-all">DEMOTE</button>
                                             )}
                                             {u.role === 'admin' && u._id !== user._id && (
                                                 <div className="hidden sm:flex gap-1.5">

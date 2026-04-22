@@ -240,7 +240,6 @@ const FacultyDashboard = () => {
     { id:'access', label:'Access Control', icon: ShieldCheck },
     { id:'schedule', label:'Schedule', icon: CalendarDays },
     { id:'courses', label:'My Course Hub', icon: BookOpen },
-    { id:'grading', label:'Grading', icon: ClipboardCheck },
     { id:'results', label:'Exam Grades', icon: BarChart2 },
     { id:'announcements', label:'Notices', icon: Megaphone },
   ];
@@ -248,7 +247,6 @@ const FacultyDashboard = () => {
   const handleLinkNavigation = (id) => {
     if (id === 'results') return navigate('/results/entry');
     if (id === 'courses') return navigate('/courses');
-    if (id === 'grading') return navigate('/assignments');
     if (id === 'announcements') return navigate('/community');
     setActiveTab(id);
   };
