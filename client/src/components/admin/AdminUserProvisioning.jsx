@@ -204,7 +204,22 @@ const AdminUserManagement = ({ user }) => {
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                             {isLoading ? (
-                                [1,2,3].map(i => <tr key={i}><td colSpan="4" className="p-8 animate-pulse bg-gray-50/50 dark:bg-gray-800/20"/></tr>)
+                                [1, 2, 3, 4, 5].map(i => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td className="px-8 py-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800" />
+                                                <div className="space-y-2">
+                                                    <div className="h-4 w-32 bg-gray-100 dark:bg-gray-800 rounded" />
+                                                    <div className="h-3 w-24 bg-gray-100 dark:bg-gray-800 rounded opacity-50" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-5"><div className="h-4 w-16 bg-gray-100 dark:bg-gray-800 rounded" /></td>
+                                        <td className="px-8 py-5"><div className="h-6 w-20 bg-gray-100 dark:bg-gray-800 rounded-xl" /></td>
+                                        <td className="px-8 py-5"><div className="h-10 w-24 bg-gray-100 dark:bg-gray-800 rounded-xl ml-auto" /></td>
+                                    </tr>
+                                ))
                             ) : filteredUsers.length > 0 ? filteredUsers.map(u => (
                                 <tr key={u._id} className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-all duration-300">
                                     <td className="px-8 py-5 cursor-pointer" 

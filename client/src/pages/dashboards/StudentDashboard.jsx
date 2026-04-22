@@ -87,9 +87,6 @@ const StudentDashboard = () => {
   const [classroomAttendance, setClassroomAttendance] = useState({ students: [], records: [] });
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    
     // Sync latest profile data on mount to ensure semester/details are fresh
     const syncProfile = async () => {
        try {
@@ -100,12 +97,14 @@ const StudentDashboard = () => {
           }
        } catch (err) {
           console.error("Profile sync failed", err);
+       } finally {
+          setIsLoading(false);
        }
     };
     if (user?.token) syncProfile();
+    else setIsLoading(false);
 
-    return () => clearTimeout(timer);
-  }, [activeTab, user?.token, dispatch]);
+  }, [user?.token, dispatch]);
 
   useEffect(() => {
     let cancelled = false;

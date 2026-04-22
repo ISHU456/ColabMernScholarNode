@@ -10,10 +10,9 @@ const ParentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
-  }, [activeTab]);
+  }, []);
 
   const menuItems = [
     { id: 'overview', icon: Home, label: 'Child Overview' },

@@ -18,8 +18,7 @@ const HODDashboard = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
+    setIsLoading(false);
   }, [activeTab]);
 
   const menuItems = [
