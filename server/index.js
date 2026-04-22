@@ -21,6 +21,8 @@ import mfaRoutes from './routes/mfaRoutes.js';
 import accessRequestRoutes from './routes/accessRequestRoutes.js';
 import gamificationRoutes from './routes/gamificationRoutes.js';
 import newsRoutes from './routes/newsRoutes.js';
+import prizeRoutes from './routes/prizeRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 import Department from './models/Department.js';
 import Course from './models/Course.js';
@@ -113,6 +115,8 @@ app.use('/api/mfa', mfaRoutes);
 app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/prizes', prizeRoutes);
+app.use('/api/orders', orderRoutes);
 
 
 // PUBLIC SETTINGS

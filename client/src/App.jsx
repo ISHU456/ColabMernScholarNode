@@ -55,14 +55,12 @@ import AdminAiManagement from './pages/admin/AdminAiManagement';
 import AdminUserAiDetail from './pages/admin/AdminUserAiDetail';
 
 // Student / Gamified pages
-<<<<<<< HEAD
 import QuizArena from './components/student/QuizArena';
 import MasterArena from './pages/student/MasterArena';
 import SessionTracker from './components/student/SessionTracker';
-=======
 import QuizArenaPage from './pages/student/QuizArenaPage';
 import QuizArenaHub from './pages/student/QuizArenaHub';
->>>>>>> e02b679 (Fix: Faculty and Admin visibility in User Management by resetting student-specific filters)
+import RewardStore from './pages/student/RewardStore';
 
 // Result pages
 import ResultEntry from './pages/results/ResultEntry';
@@ -324,11 +322,13 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
 
-          <Route path="/quiz-arena/:quizId" element={
+          <Route path="/reward-store" element={
             <ProtectedRoute allowedRoles={['student', 'admin']}>
-              <QuizArena />
+              <RewardStore />
             </ProtectedRoute>
           } />
+
+
 
 
 
