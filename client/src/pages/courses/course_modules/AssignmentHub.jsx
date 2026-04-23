@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     ClipboardCheck, FileText, Plus, Send, Clock, Activity, 
     CheckCircle2, AlertCircle, Eye, Download, Users, Edit3, 
-    Trash2, X, Check, Save, Sparkles, Brain, Trophy, Zap
+    Trash2, X, Check, Save, Sparkles, Brain, Trophy, Zap, Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -505,18 +505,28 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
 
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-8">
                     {/* Protocol Meta */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-6 bg-white dark:bg-gray-800/30 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-2">Maximum Marks</span>
-                            <div className="text-xl font-semibold dark:text-white flex items-center gap-2"><Trophy size={18} className="text-amber-500"/> {asgn.totalMarks}</div>
+                    {/* Protocol Meta Grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="p-4 bg-white/60 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-center min-w-0">
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-1 truncate">Max Marks</span>
+                            <div className="text-sm font-bold dark:text-white flex items-center gap-1.5"><Trophy size={14} className="text-amber-500 shrink-0"/> {asgn.totalMarks}</div>
                         </div>
-                        <div className="p-6 bg-white dark:bg-gray-800/30 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-2">Protocol Deadline</span>
-                            <div className="text-xs font-semibold dark:text-white flex items-center gap-2 text-rose-500"><Clock size={16}/> {new Date(asgn.dueDate).toLocaleString()}</div>
+                        <div className="p-4 bg-white/60 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-center min-w-0">
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-1 truncate">Deadline</span>
+                            <div className="text-[10px] font-bold dark:text-white flex items-center gap-1.5 text-rose-500"><Clock size={12} className="shrink-0"/> {new Date(asgn.dueDate).toLocaleDateString()} {new Date(asgn.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
-                        <div className="p-6 bg-primary-600 rounded-3xl text-white shadow-xl shadow-primary-500/20">
-                            <span className="text-xs font-semibold uppercase tracking-wide block mb-2 opacity-80">Sync Progress</span>
-                            <div className="text-xl font-semibold flex items-center gap-2">{mySub ? (isGraded ? `${mySub.marksObtained} / ${asgn.totalMarks}` : 'SUBMITTED') : 'NOT STARTED'}</div>
+                        <div className="p-4 bg-white/60 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col justify-center min-w-0">
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-1 truncate">Rewards</span>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1 text-indigo-500 text-[10px] font-bold shrink-0"><Zap size={12}/> {asgn.xpReward || 50}</div>
+                                <div className="flex items-center gap-1 text-amber-500 text-[10px] font-bold shrink-0"><Award size={12}/> {asgn.coinsReward || 10}</div>
+                            </div>
+                        </div>
+                        <div className={`p-4 rounded-2xl text-white shadow-lg flex flex-col justify-center min-w-0 ${mySub ? 'bg-emerald-600 shadow-emerald-500/20' : 'bg-primary-600 shadow-primary-500/20'}`}>
+                            <span className="text-[9px] font-bold uppercase tracking-widest block mb-1 opacity-80 truncate">Progress</span>
+                            <div className="text-[10px] font-bold flex items-center gap-1.5 uppercase tracking-tight">
+                                {mySub ? (isGraded ? `${mySub.marksObtained} / ${asgn.totalMarks}` : 'SUBMITTED') : 'NOT STARTED'}
+                            </div>
                         </div>
                     </div>
 
@@ -577,7 +587,14 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
                                         <p className="text-xs font-semibold text-amber-500 uppercase tracking-wide">Quiz protocol should be initiated from the master link.</p>
                                     </div>
                                 )}
-                                <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-primary-600 text-white rounded-2xl font-semibold text-xs uppercase tracking-wide hover:bg-primary-700 shadow-xl transition-all">DEPOY SUBMISSION PROTOCOL</button>
+                                <button 
+                                    type="submit" 
+                                    disabled={isSubmitting} 
+                                    className="w-full py-4 bg-primary-600 text-white rounded-2xl font-semibold text-xs uppercase tracking-[0.2em] hover:bg-primary-700 shadow-xl shadow-primary-500/20 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                                >
+                                    {isSubmitting ? <Zap className="animate-spin" size={18}/> : <Send size={18}/>}
+                                    DEPLOY SUBMISSION PROTOCOL
+                                </button>
                             </form>
                         )
                     )}
