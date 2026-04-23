@@ -247,10 +247,6 @@ const AdminDashboard = () => {
            </div>
            
            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-3 bg-slate-50 dark:bg-white/5 px-5 py-2.5 rounded-2xl border border-slate-100 dark:border-white/5 focus-within:ring-2 focus-within:ring-indigo-500/30 transition-all duration-300">
-                <Search size={16} className="text-slate-400" />
-                <input type="text" placeholder="Search across system..." className="bg-transparent text-xs font-semibold uppercase tracking-wide outline-none text-slate-900 dark:text-white w-48" />
-              </div>
               <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800/60">
                  <div className="text-right hidden sm:block">
                     <p className="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-tighter">System Administrator</p>
