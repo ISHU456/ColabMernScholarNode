@@ -163,7 +163,7 @@ const AdminDashboard = () => {
     { id: 'faculty-attendance', icon: CalendarDays, label: 'Faculty Presence' },
     { id: 'student-attendance', icon: UserCheck, label: 'Student Attendance' },
     { id: 'monthly-register', icon: Calendar, label: 'Monthly Register' },
-    { id: 'pending-faculty', icon: Shield, label: 'Pending Faculty' },
+    { id: 'pending-faculty', icon: Shield, label: 'Pending Approvals' },
     { id: 'courses', icon: Book, label: 'Academic Lattice' },
     { id: 'global-alerts', icon: Bell, label: 'Global Broadcasts' },
     { id: 'results-hub', icon: TrendingUp, label: 'Results & Transcripts' },

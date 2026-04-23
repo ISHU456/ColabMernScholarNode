@@ -819,10 +819,15 @@ export const notifyFaculty = async (req, res) => {
     }
 };
 
-export const getPendingTeachers = async (req, res) => {
+export const getPendingUsers = async (req, res) => {
     try {
-        const teachers = await User.find({ role: 'teacher', isAuthorized: false }).select('-password');
-        res.json(teachers);
+        const users = await User.find({ 
+            $or: [
+                { role: 'teacher', isAuthorized: false },
+                { role: 'student', isActive: false }
+            ]
+        }).select('-password');
+        res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -839,9 +844,28 @@ export const authorizeTeacher = async (req, res) => {
         
         user.isAuthorized = true;
         user.isActive = true;
+        user.approvedAt = new Date();
         await user.save();
         
         res.json({ message: 'Identity access securely authorized and granted.', user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getApprovedHistory = async (req, res) => {
+    try {
+        const users = await User.find({ 
+            $or: [
+                { approvedAt: { $exists: true, $ne: null } },
+                { role: 'teacher', isAuthorized: true },
+                { role: 'student', isActive: true }
+            ]
+        })
+        .select('-password')
+        .sort({ approvedAt: -1, updatedAt: -1 })
+        .limit(20);
+        res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

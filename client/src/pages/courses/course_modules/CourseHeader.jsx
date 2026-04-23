@@ -57,23 +57,11 @@ const CourseHeader = ({
       <div className="flex items-center gap-2 lg:gap-4 shrink-0">
          <div className="hidden sm:flex flex-col items-end">
             <div className="text-xs font-semibold text-emerald-500 uppercase tracking-wide flex items-center gap-1.5"><div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" /> Live</div>
-            <p className="text-xs font-semibold dark:text-white uppercase">{onlineStudents} Members</p>
          </div>
          <Link to="/community" className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-primary-600 rounded-xl lg:rounded-2xl transition-all">
             <Megaphone size={18}/>
          </Link>
          
-         <div className="hidden lg:flex items-center gap-3 px-4 h-12 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-900/20">
-            <div className="flex items-center gap-1.5">
-               <Award size={14} className="text-amber-500" />
-               <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{gamificationState?.coins || 0}</span>
-            </div>
-            <div className="w-[1px] h-4 bg-indigo-200 dark:bg-indigo-800" />
-            <div className="flex items-center gap-1.5">
-               <Zap size={14} className="text-indigo-500" />
-               <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{gamificationState?.xp || 0} XP</span>
-            </div>
-         </div>
 
          {canManage && (
            <button 

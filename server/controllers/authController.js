@@ -111,22 +111,23 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
     if (user && (await user.matchPassword(password))) {
-      // Allow login for unauthorized teachers but they will be restricted by ProtectedRoute
+      // Allow login for unauthorized teachers and pending students but they will be restricted by ProtectedRoute
       if (!user.isActive || !user.isAuthorized) {
-          if (user.role === 'teacher') {
+          if (user.role === 'teacher' || user.role === 'student') {
               // We return the user with a token but they will be caught by frontend ProtectedRoute
               return res.json({
                   _id: user._id,
                   name: user.name,
                   email: user.email,
                   role: user.role,
-                  isAuthorized: false,
+                  isActive: user.isActive,
+                  isAuthorized: user.isAuthorized,
                   registrationToken: user.registrationToken,
                   token: generateToken(user._id),
               });
           }
           
-          const msg = user.role === 'student' ? 'Account pending administrative approval.' : 'Account deactivated. Contact system admin.';
+          const msg = 'Account deactivated. Contact system admin.';
           return res.status(403).json({ message: msg });
       }
       

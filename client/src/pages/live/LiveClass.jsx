@@ -8,6 +8,7 @@ import {
   Settings, X, PhoneOff, Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
@@ -26,16 +27,16 @@ const LiveClass = () => {
   const [handRaised, setHandRaised] = useState(false);
   const [handsRaisedList, setHandsRaisedList] = useState([]);
   const [viewerCount, setViewerCount] = useState(0);
-  const [members, setMembers] = useState([]); // List of { name, role, _id }
-  const [activeTab, setActiveTab] = useState('chat'); // chat | members
+  const [members, setMembers] = useState([]);
+  const [activeTab, setActiveTab] = useState('chat');
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   
   const socketRef = useRef();
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
-  const streamRef = useRef(); // Use Ref for stream to avoid closure issues
-  const peerConnections = useRef({}); // Object to store all RTC connections
-  const pendingCandidates = useRef({}); // Queue for ICE candidates before description is set
+  const streamRef = useRef();
+  const peerConnections = useRef({});
+  const pendingCandidates = useRef({});
   const chatEndRef = useRef();
   const joinTime = useRef(Date.now());
 
@@ -66,27 +67,24 @@ const LiveClass = () => {
       setViewerCount(memberList.length);
     });
 
-    // Chat Logic
     socket.on('new-message', (msg) => {
       setMessages(prev => [...prev, msg].slice(-100));
     });
 
     socket.on('student-raised-hand', (userData) => {
       setHandsRaisedList(prev => [...prev, userData]);
-      // Remove after 10 seconds automatically
       setTimeout(() => {
         setHandsRaisedList(prev => prev.filter(u => u._id !== userData._id));
       }, 10000);
     });
 
-    // WebRTC Signaling
     socket.on('new-viewer', async (viewerId) => {
       if (!isTeacher) return;
       createPeerConnection(viewerId, true);
     });
 
     socket.on('offer', async (senderId, offer) => {
-      if (isTeacher) return; // Teachers don't receive offers in this broadcast model
+      if (isTeacher) return;
       await handleOffer(senderId, offer);
     });
 
@@ -98,14 +96,13 @@ const LiveClass = () => {
       await handleIceCandidate(senderId, candidate);
     });
 
-    // Viewers count
     socket.on('user-connected', () => setViewerCount(prev => prev + 1));
     socket.on('user-disconnected', () => setViewerCount(prev => Math.max(0, prev - 1)));
 
     return () => {
       socket.disconnect();
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
   }, [classId]);
@@ -195,8 +192,6 @@ const LiveClass = () => {
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
       socketRef.current.emit('answer', senderId, answer);
-      
-      // Process any candidates that arrived early
       await processQueuedCandidates(senderId, pc);
     } catch (e) {
       console.error("Failed to handle offer", e);
@@ -248,25 +243,27 @@ const LiveClass = () => {
   };
 
   const handleLeave = async () => {
-    // 1. Calculate time spent
     const endTime = Date.now();
     const durationMs = endTime - joinTime.current;
     const durationMin = Math.floor(durationMs / 60000);
 
-    // 2. Stop camera tracks immediately
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+
+    if (isTeacher) {
+      try {
+        await axios.post(`${API_URL}/api/notifications/end-live`, { courseId: classId }, {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+      } catch (err) {
+        console.error("Failed to terminate live session globally:", err);
+      }
     }
 
-    // 3. Award coins (Student only)
     if (!isTeacher && durationMin > 0) {
       try {
-        await axios.post(`${API_URL}/api/gamification/live-class-coins`, {
-          minutes: durationMin
-        }, {
+        await axios.post(`${API_URL}/api/gamification/live-class-coins`, { minutes: durationMin }, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         alert(`Neural Link Terminated. You earned ${durationMin * 2} Scholar Coins for your participation.`);
@@ -279,8 +276,8 @@ const LiveClass = () => {
   };
 
   const toggleMute = () => {
-    if (stream) {
-      const audioTrack = stream.getAudioTracks()[0];
+    if (streamRef.current) {
+      const audioTrack = streamRef.current.getAudioTracks()[0];
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsAudioMuted(!audioTrack.enabled);
@@ -289,8 +286,8 @@ const LiveClass = () => {
   };
 
   const toggleVideo = () => {
-    if (stream) {
-      const videoTrack = stream.getVideoTracks()[0];
+    if (streamRef.current) {
+      const videoTrack = streamRef.current.getVideoTracks()[0];
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsVideoMuted(!videoTrack.enabled);
@@ -300,10 +297,7 @@ const LiveClass = () => {
 
   return (
     <div className="h-screen w-full bg-[#030712] text-white flex flex-col lg:flex-row overflow-hidden font-sans">
-      
-      {/* --- Main Stream Section --- */}
       <div className="flex-1 flex flex-col relative overflow-hidden bg-black">
-        {/* Header Overlay */}
         <div className="absolute top-0 inset-x-0 p-6 z-30 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
           <div className="flex items-center gap-4 pointer-events-auto">
             <button onClick={handleLeave} className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all backdrop-blur-md">
@@ -324,7 +318,6 @@ const LiveClass = () => {
               </div>
             </div>
           </div>
-          
           <div className="flex items-center gap-2 pointer-events-auto">
              <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-2xl backdrop-blur-md border border-white/5">
                 <ShieldCheck size={14} className="text-emerald-500" />
@@ -333,23 +326,11 @@ const LiveClass = () => {
           </div>
         </div>
 
-        {/* Video Surface */}
         <div className="flex-1 w-full h-full relative group">
            {isTeacher ? (
-              <video 
-                ref={localVideoRef} 
-                autoPlay 
-                playsInline 
-                 muted
-                className={`w-full h-full object-cover ${isVideoMuted ? 'hidden' : 'block'}`}
-              />
+              <video ref={localVideoRef} autoPlay playsInline muted className={`w-full h-full object-cover ${isVideoMuted ? 'hidden' : 'block'}`} />
            ) : (
-              <video 
-                ref={remoteVideoRef} 
-                autoPlay 
-                playsInline 
-                className="w-full h-full object-contain"
-              />
+              <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-contain" />
            )}
            
            {(isTeacher && isVideoMuted) && (
@@ -368,7 +349,6 @@ const LiveClass = () => {
               </div>
            )}
 
-           {/* Floating Hand Alerts (Teacher Only) */}
            <div className="absolute bottom-32 left-8 z-[40] flex flex-col gap-3">
               <AnimatePresence>
                 {handsRaisedList.map((st, i) => (
@@ -387,21 +367,14 @@ const LiveClass = () => {
            </div>
         </div>
 
-        {/* Control Bar Overlay */}
         <div className="absolute bottom-8 inset-x-0 flex justify-center z-[50] pointer-events-none">
            <div className="flex items-center gap-4 p-2 bg-[#1f2937]/60 backdrop-blur-2xl rounded-full border border-white/10 pointer-events-auto shadow-3xl">
               {isTeacher && (
                  <>
-                   <button 
-                     onClick={toggleVideo} 
-                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isVideoMuted ? 'bg-rose-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}
-                   >
+                   <button onClick={toggleVideo} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isVideoMuted ? 'bg-rose-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}>
                      {isVideoMuted ? <VideoOff size={20} /> : <Video size={20} />}
                    </button>
-                   <button 
-                     onClick={toggleMute} 
-                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isAudioMuted ? 'bg-rose-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}
-                   >
+                   <button onClick={toggleMute} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isAudioMuted ? 'bg-rose-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}>
                      {isAudioMuted ? <MicOff size={20} /> : <Mic size={20} />}
                    </button>
                    <div className="w-px h-8 bg-white/10 mx-2" />
@@ -409,35 +382,24 @@ const LiveClass = () => {
               )}
               
               {!isTeacher && (
-                 <button 
-                   onClick={toggleHand} 
-                   className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${handRaised ? 'bg-emerald-500 text-white' : 'bg-white/10 hover:bg-white/20'}`}
-                 >
+                 <button onClick={toggleHand} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${handRaised ? 'bg-emerald-500 text-white' : 'bg-white/10 hover:bg-white/20'}`}>
                    <Hand size={20} fill={handRaised ? 'white' : 'none'} />
                  </button>
               )}
 
-              <button 
-                 onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isSidebarVisible ? 'bg-primary-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-white/10 hover:bg-white/20'}`}
-                 title={isSidebarVisible ? "Enter Full Mode" : "Open Interactions"}
-               >
-                 <MessageSquare size={20} />
-               </button>
+              <button onClick={() => setIsSidebarVisible(!isSidebarVisible)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isSidebarVisible ? 'bg-primary-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-white/10 hover:bg-white/20'}`}>
+                <MessageSquare size={20} />
+              </button>
 
-               <div className="w-px h-8 bg-white/10 mx-2" />
+              <div className="w-px h-8 bg-white/10 mx-2" />
 
-               <button 
-                 onClick={handleLeave} 
-                 className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3"
-               >
-                 <PhoneOff size={16} /> END SESSION
-               </button>
+              <button onClick={handleLeave} className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3">
+                <PhoneOff size={16} /> END SESSION
+              </button>
            </div>
         </div>
       </div>
 
-      {/* --- Sidebar (Chat & Interactions) --- */}
       <AnimatePresence>
         {isSidebarVisible && (
           <motion.div 
@@ -453,22 +415,10 @@ const LiveClass = () => {
                   <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-300">Class interaction hub</h2>
                </div>
                <div className="flex bg-gray-900/50 p-1 rounded-xl border border-gray-800">
-                  <button 
-                    onClick={() => setActiveTab('chat')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'chat' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
-                  >
-                    Chat
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('members')}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'members' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
-                  >
-                    Members
-                  </button>
+                  <button onClick={() => setActiveTab('chat')} className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'chat' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}>Chat</button>
+                  <button onClick={() => setActiveTab('members')} className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${activeTab === 'members' ? 'bg-primary-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}>Members</button>
                </div>
-               <button onClick={() => setIsSidebarVisible(false)} className="lg:hidden p-2 text-gray-400 hover:text-white">
-                  <X size={20} />
-               </button>
+               <button onClick={() => setIsSidebarVisible(false)} className="lg:hidden p-2 text-gray-400 hover:text-white"><X size={20} /></button>
             </header>
 
             {activeTab === 'chat' ? (
@@ -480,15 +430,9 @@ const LiveClass = () => {
                        <p className="text-xs font-bold uppercase tracking-widest">Protocol initiated.<br/>Waiting for session discourse.</p>
                     </div>
                   )}
-                  
                   <AnimatePresence initial={false}>
                     {messages.map((msg) => (
-                      <motion.div 
-                        key={msg.id} 
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        className={`flex flex-col ${msg.sender === user.name ? 'items-end' : 'items-start'}`}
-                      >
+                      <motion.div key={msg.id} initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} className={`flex flex-col ${msg.sender === user.name ? 'items-end' : 'items-start'}`}>
                         <div className="flex items-center gap-2 mb-1">
                            <span className="text-[10px] font-bold text-gray-500 uppercase">{msg.sender}</span>
                            <span className="text-[8px] font-bold text-gray-700">{msg.time}</span>
@@ -501,57 +445,34 @@ const LiveClass = () => {
                   </AnimatePresence>
                   <div ref={chatEndRef} />
                 </div>
-
                 <form onSubmit={sendMessage} className="p-6 bg-[#0d111c] border-t border-gray-800 flex items-center gap-4">
-                  <input 
-                    type="text" 
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Submit observation..." 
-                    className="flex-1 h-12 bg-gray-900/50 border border-gray-800 rounded-2xl px-5 text-sm outline-none focus:border-primary-500 transition-all font-medium"
-                  />
-                  <button 
-                    type="submit"
-                    className="w-12 h-12 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-95"
-                  >
-                    <Send size={18} />
-                  </button>
+                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Submit observation..." className="flex-1 h-12 bg-gray-900/50 border border-gray-800 rounded-2xl px-5 text-sm outline-none focus:border-primary-500 transition-all font-medium" />
+                  <button type="submit" className="w-12 h-12 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-95"><Send size={18} /></button>
                 </form>
               </>
             ) : (
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 no-scrollbar">
-             <div className="flex items-center justify-between mb-4 px-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Live Registry</p>
-                <div className="px-2 py-1 bg-emerald-500/10 rounded-lg text-[9px] font-bold text-emerald-500">{members.length} ONLINE</div>
-             </div>
-             
-             {members.map((member, i) => (
-               <motion.div 
-                 initial={{ opacity: 0, x: 10 }}
-                 animate={{ opacity: 1, x: 0 }}
-                 key={member.socketId || i} 
-                 className="flex items-center justify-between p-4 bg-gray-900/30 border border-gray-800 rounded-2xl group hover:border-primary-500/30 transition-all"
-               >
-                  <div className="flex items-center gap-3">
-                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs ${member.role === 'teacher' ? 'bg-rose-600 shadow-[0_0_15px_rgba(225,29,72,0.3)]' : 'bg-primary-600'}`}>
-                        {member.name?.substring(0, 2).toUpperCase()}
-                     </div>
-                     <div>
-                        <p className="text-xs font-bold uppercase tracking-tight text-gray-200 group-hover:text-white transition-colors">{member.name}</p>
-                        <p className={`text-[9px] font-bold uppercase ${member.role === 'teacher' ? 'text-rose-500' : 'text-primary-400'}`}>
-                           {member.role === 'teacher' ? 'Faculty Lead' : 'Scholastic Terminal'}
-                        </p>
-                     </div>
-                  </div>
-                  {member.role === 'teacher' && <Radio size={14} className="text-rose-500 animate-pulse" />}
-               </motion.div>
-             ))}
-          </div>
-        )}
+              <div className="flex-1 p-4 overflow-y-auto space-y-4 no-scrollbar">
+                 <div className="flex items-center justify-between mb-4 px-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Live Registry</p>
+                    <div className="px-2 py-1 bg-emerald-500/10 rounded-lg text-[9px] font-bold text-emerald-500">{members.length} ONLINE</div>
+                 </div>
+                 {members.map((member, i) => (
+                   <motion.div key={member.socketId || i} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center justify-between p-4 bg-gray-900/30 border border-gray-800 rounded-2xl group hover:border-primary-500/30 transition-all">
+                      <div className="flex items-center gap-3">
+                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs ${member.role === 'teacher' ? 'bg-rose-600 shadow-[0_0_15px_rgba(225,29,72,0.3)]' : 'bg-primary-600'}`}>{member.name?.substring(0, 2).toUpperCase()}</div>
+                         <div>
+                            <p className="text-xs font-bold uppercase tracking-tight text-gray-200 group-hover:text-white transition-colors">{member.name}</p>
+                            <p className={`text-[9px] font-bold uppercase ${member.role === 'teacher' ? 'text-rose-500' : 'text-primary-400'}`}>{member.role === 'teacher' ? 'Faculty Lead' : 'Scholastic Terminal'}</p>
+                         </div>
+                      </div>
+                      {member.role === 'teacher' && <Radio size={14} className="text-rose-500 animate-pulse" />}
+                   </motion.div>
+                 ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };

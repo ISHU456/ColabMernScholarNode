@@ -79,6 +79,7 @@ const userSchema = new mongoose.Schema(
       badge: { type: mongoose.Schema.Types.ObjectId, ref: 'Badge' },
       earnedAt: { type: Date, default: Date.now }
     }],
+    approvedAt: { type: Date },
   },
   {
     timestamps: true,

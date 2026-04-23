@@ -31,6 +31,7 @@ const courseSchema = new mongoose.Schema({
   autoRestrictEnabled: { type: Boolean, default: true },
   marksDeadline: { type: Date },
   views: { type: Number, default: 0 },
+  isLive: { type: Boolean, default: false },
   coinsReward: { type: Number, default: 0 },
   xpReward: { type: Number, default: 0 }
 }, {

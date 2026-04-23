@@ -102,8 +102,8 @@ const ProtectedRoute = ({ children, allowedRoles, checkDept = true }) => {
      }
   }
 
-  // Handle Teacher Authorization Redirect
-  if (user.role === 'teacher' && user.isAuthorized === false) {
+  // Handle Teacher/Student Authorization Redirect
+  if ((user.role === 'teacher' || user.role === 'student') && (user.isAuthorized === false || user.isActive === false)) {
     if (window.location.pathname !== '/waiting-authorization') {
       return <Navigate to="/waiting-authorization" replace />;
     }

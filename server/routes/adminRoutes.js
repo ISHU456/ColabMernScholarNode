@@ -28,8 +28,9 @@ import {
     approveCourseResults,
     rejectCourseResults,
     notifyFaculty,
-    getPendingTeachers,
-    authorizeTeacher
+    getPendingUsers,
+    authorizeTeacher,
+    getApprovedHistory
 } from '../controllers/adminController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 
@@ -48,9 +49,10 @@ router.delete('/users/:id', deleteUser);
 router.get('/teachers/attendance', getTeachersWithAttendance);
 router.post('/teachers/attendance', markTeacherAttendance);
 
-// TEACHER & COURSE MGMT
-router.get('/teachers/pending', getPendingTeachers);
-router.post('/teachers/pending/:id/authorize', authorizeTeacher);
+// PENDING APPROVALS
+router.get('/pending-authorizations', getPendingUsers);
+router.post('/authorizations/:id/approve', authorizeTeacher);
+router.get('/approved-history', getApprovedHistory);
 router.get('/teachers/:id', getTeacherDetails);
 router.put('/teachers/:teacherId/assignments', updateTeacherAssignments);
 router.get('/students/:id', getStudentDetails);

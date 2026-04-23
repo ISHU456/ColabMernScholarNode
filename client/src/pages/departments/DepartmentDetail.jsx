@@ -64,6 +64,37 @@ const DepartmentDetail = () => {
     visible: { opacity: 1, y: 0 }
   };
 
+  const getRealThings = (code) => {
+    const data = {
+      CSE: {
+        tagline: "Architecting the Digital Future through Neural Synergy and Code.",
+        overview: "The Department of Computer Science and Engineering is the institutional core of technological innovation. Our ecosystem is precisely engineered to transition students from foundational algorithmic logic to advanced system architecture. We focus on high-performance distributed systems, multi-layered neural processing, and the ethical deployment of autonomous agents, ensuring our graduates are prepared for the sub-millisecond query resolution demands of the modern world.",
+        vision: "To become a global nexus for computational excellence, where code and human ingenuity converge to solve civilization-scale challenges.",
+        mission: "To deliver a research-intensive pedagogical framework that emphasizes version-controlled collaboration, zero-trust security principles, and the development of high-fidelity software solutions."
+      },
+      ECE: {
+        tagline: "Engineering the High-Throughput Pipelines of Global Connectivity.",
+        overview: "The Electronics and Communication Engineering department focuses on the physical and logical layers of the global information matrix. We specialize in low-latency WebRTC pipelines, advanced VLSI design, and distributed edge-caching protocols. Our scholars master the art of signal processing and hardware-software co-design, building the hardened infrastructure that powers the modern scholar's nexus.",
+        vision: "To lead the evolution of global connectivity through polymorphic hardware architectures and ultra-HD pedagogical transmission systems.",
+        mission: "To equip engineers with the expertise to design, deploy, and maintain the distributed knowledge nodes that form the backbone of our digital civilization."
+      },
+      ME: {
+        tagline: "Precision Engineering for the Physical Industrial Matrix.",
+        overview: "The Mechanical Engineering department is dedicated to the study of thermodynamics, structural integrity, and advanced robotics. We blend traditional physics with modern heuristic models to design high-performance mechanical systems. From additive manufacturing to predictive maintenance matrices, we prepare engineers to orchestrate sophisticated industrial environments.",
+        vision: "To redefine the boundaries of physical manufacturing and autonomous mechanical systems through predictive analytics and sustainable design.",
+        mission: "To synthesize granular mechanical insights with large-scale industrial deployment, fostering a generation of engineers capable of maintaining absolute structural integrity in complex systems."
+      }
+    };
+    return data[code.toUpperCase()] || {
+      tagline: "Innovating the future, educating the leaders of tomorrow.",
+      overview: "Leading the way in academic excellence and professional growth through a research-driven pedagogical framework.",
+      vision: "To be a global leader in education and research, fostering innovation across all disciplinary nodes.",
+      mission: "To empower students with deep-tech knowledge and institutional values for a better world."
+    };
+  };
+
+  const realThings = getRealThings(code);
+
   return (
     <div className="flex-1 bg-[#fafbfc] dark:bg-[#0b0f19] smooth-scroll">
       
@@ -85,7 +116,7 @@ const DepartmentDetail = () => {
             transition={{ duration: 0.8 }}
             className="max-w-4xl"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold text-xs uppercase tracking-[0.3em] mb-6 border border-primary-200 dark:border-primary-800">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-100 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400 font-semibold text-xs uppercase tracking-[0.3em] mb-6 border border-primary-200 dark:border-primary-800">
               <Star size={10} className="fill-current" />
               <span>Center of Excellence</span>
             </div>
@@ -93,7 +124,7 @@ const DepartmentDetail = () => {
               {dept.name}
             </h1>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium max-w-2xl mb-10 leading-relaxed italic">
-              "{dept.tagline || "Innovating the future, educating the leaders of tomorrow."}"
+              "{dept.tagline || realThings.tagline}"
             </p>
             <div className="flex flex-wrap gap-4">
               <button className="px-8 py-4 bg-primary-600 text-white font-semibold text-xs uppercase tracking-wide rounded-2xl shadow-2xl shadow-primary-500/30 hover:bg-primary-700 transition-all flex items-center gap-2">
@@ -115,23 +146,32 @@ const DepartmentDetail = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-6"
           >
             {(dept.highlights?.length > 0 ? dept.highlights : [
-              { title: "Placements", value: "95%", icon: "Briefcase" },
-              { title: "Research Papers", value: "500+", icon: "Microscope" },
-              { title: "Avg Package", value: "12 LPA", icon: "Trophy" },
-              { title: "Years of Legacy", value: "25+", icon: "Award" }
-            ]).map((stat, i) => (
-              <motion.div 
-                key={i}
-                variants={itemVariants}
-                className="glass p-6 rounded-[2rem] border border-white dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 shadow-2xl text-center group hover:border-primary-500/30 transition-all"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-3 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform">
-                  <Activity size={20} />
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">{stat.value}</h3>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{stat.title}</p>
-              </motion.div>
-            ))}
+              { title: "Placements", value: "95%", icon: Briefcase },
+              { title: "Research Papers", value: "500+", icon: Microscope },
+              { title: "Avg Package", value: "12 LPA", icon: Trophy },
+              { title: "Years of Legacy", value: "25+", icon: Award }
+            ]).map((stat, i) => {
+              const IconComponent = typeof stat.icon === 'string' ? (
+                stat.icon === 'Briefcase' ? Briefcase :
+                stat.icon === 'Microscope' ? Microscope :
+                stat.icon === 'Trophy' ? Trophy :
+                stat.icon === 'Award' ? Award : Activity
+              ) : stat.icon || Activity;
+
+              return (
+                <motion.div 
+                  key={i}
+                  variants={itemVariants}
+                  className="glass p-6 rounded-[2rem] border border-white dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 shadow-2xl text-center group hover:border-primary-500/30 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-3 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform">
+                    <IconComponent size={20} />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">{stat.value}</h3>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{stat.title}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
@@ -167,7 +207,7 @@ const DepartmentDetail = () => {
                   <div>
                     <h2 className="text-3xl font-semibold text-gray-900 dark:text-white uppercase tracking-tighter mb-6">About the <span className="text-primary-600">Department</span></h2>
                     <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed mb-8">
-                      {dept.overview || dept.description || "Leading the way in academic excellence and professional growth."}
+                      {dept.overview || dept.description || realThings.overview}
                     </p>
                     <div className="space-y-6">
                       <div className="flex gap-6">
@@ -176,7 +216,7 @@ const DepartmentDetail = () => {
                         </div>
                         <div>
                           <h4 className="font-semibold text-xs uppercase tracking-wide text-gray-900 dark:text-white mb-1.5">Our Vision</h4>
-                          <p className="text-xs text-gray-500 leading-relaxed">{dept.vision || "To be a global leader in education and research."}</p>
+                          <p className="text-xs text-gray-500 leading-relaxed">{dept.vision || realThings.vision}</p>
                         </div>
                       </div>
                       <div className="flex gap-6">
@@ -185,7 +225,7 @@ const DepartmentDetail = () => {
                         </div>
                         <div>
                           <h4 className="font-semibold text-xs uppercase tracking-wide text-gray-900 dark:text-white mb-1.5">Our Mission</h4>
-                          <p className="text-xs text-gray-500 leading-relaxed">{dept.mission || "To empower students with knowledge and values for a better world."}</p>
+                          <p className="text-xs text-gray-500 leading-relaxed">{dept.mission || realThings.mission}</p>
                         </div>
                       </div>
                     </div>

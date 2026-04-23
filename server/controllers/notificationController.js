@@ -60,7 +60,11 @@ export const triggerLiveClassNotification = async (req, res) => {
       return res.json({ message: 'No students found in this sector to notify.' });
     }
 
-    // 3. Create bulk notifications
+    // 3. Update course live status
+    course.isLive = true;
+    await course.save();
+
+    // 4. Create bulk notifications
     const notificationData = targetStudents.map(student => ({
       recipient: student._id,
       sender: senderId,
@@ -73,8 +77,11 @@ export const triggerLiveClassNotification = async (req, res) => {
 
     const createdNotifications = await Notification.insertMany(notificationData);
 
-    // 4. Emit socket events if io is available
+    // 5. Emit socket events if io is available
     if (req.io) {
+      // Global broadcast for the persistent banner
+      req.io.emit('live-class-status-change', { courseId, code: course.code, isLive: true });
+
       targetStudents.forEach(student => {
         req.io.to(`user_${student._id}`).emit('new-notification', {
            title: 'LIVE SESSION ALERT',
@@ -88,5 +95,33 @@ export const triggerLiveClassNotification = async (req, res) => {
     res.json({ message: `Successfully synchronized ${targetStudents.length} student terminals.` });
   } catch (error) {
     res.status(500).json({ message: 'Deployment Failure', error: error.message });
+  }
+};
+
+export const endLiveClassNotification = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    course.isLive = false;
+    await course.save();
+
+    if (req.io) {
+      req.io.emit('live-class-status-change', { courseId, code: course.code, isLive: false });
+    }
+
+    res.json({ message: 'Live class terminated successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Termination Failure', error: error.message });
+  }
+};
+
+export const getActiveLiveClasses = async (req, res) => {
+  try {
+    const liveCourses = await Course.find({ isLive: true }).select('name code _id');
+    res.json(liveCourses);
+  } catch (error) {
+    res.status(500).json({ message: 'Query Failure', error: error.message });
   }
 };

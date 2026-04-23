@@ -23,6 +23,8 @@ import gamificationRoutes from './routes/gamificationRoutes.js';
 import newsRoutes from './routes/newsRoutes.js';
 import prizeRoutes from './routes/prizeRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import communityChatRoutes from './routes/communityChatRoutes.js';
+
 
 import Department from './models/Department.js';
 import Course from './models/Course.js';
@@ -117,6 +119,8 @@ app.use('/api/gamification', gamificationRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/prizes', prizeRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/community-chat', communityChatRoutes);
+
 
 
 // PUBLIC SETTINGS

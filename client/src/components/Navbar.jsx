@@ -17,9 +17,10 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [gamification, setGamification] = useState(null);
   const [selectedDept, setSelectedDept] = useState(null);
   const [settings, setSettings] = useState(null);
-
+  const [liveClasses, setLiveClasses] = useState([]);
   useEffect(() => {
     const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:5001'), { transports: ['websocket'] });
+    
     const fetchSettings = async () => {
       try {
         const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/public/settings`);
@@ -28,9 +29,38 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
         console.error("Failed to load global broadcast settings.");
       }
     };
+
+    const fetchLiveClasses = async () => {
+      if (!user) return;
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/notifications/active-live`, {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        setLiveClasses(data);
+      } catch (err) {
+        console.error("Failed to fetch active live classes.");
+      }
+    };
+
     fetchSettings();
-    return () => socket.disconnect();
-  }, []);
+    fetchLiveClasses();
+
+    socket.on('live-class-status-change', (data) => {
+      if (data.isLive) {
+        setLiveClasses(prev => {
+          if (prev.some(c => c._id === data.courseId)) return prev;
+          return [...prev, { _id: data.courseId, code: data.code }];
+        });
+      } else {
+        setLiveClasses(prev => prev.filter(c => c._id !== data.courseId));
+      }
+    });
+
+    return () => {
+      socket.off('live-class-status-change');
+      socket.disconnect();
+    };
+  }, [user]);
 
   useEffect(() => {
     const dept = localStorage.getItem('selectedDepartment');
@@ -118,6 +148,37 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
 
   return (
     <nav className="sticky top-0 z-[999] bg-white dark:bg-[#0f172a] lg:bg-white/80 lg:dark:bg-[#0f172a]/80 lg:backdrop-blur-xl border-b border-gray-100 dark:border-gray-800/50 transition-all duration-300">
+      {/* Live Class Banner */}
+      <AnimatePresence>
+        {liveClasses.length > 0 && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-indigo-600 dark:bg-indigo-500 text-white overflow-hidden"
+          >
+            <div className="max-w-[1600px] mx-auto px-4 py-2 flex items-center justify-center gap-4 text-xs font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse shadow-[0_0_10px_white]" />
+                <span className="opacity-90">Live Session Active:</span>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {liveClasses.map(cls => (
+                  <Link 
+                    key={cls._id} 
+                    to={`/live-class/${cls._id}`}
+                    className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg transition-colors border border-white/20 flex items-center gap-1.5"
+                  >
+                    {cls.code}
+                    <Bot size={12} className="opacity-60" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}

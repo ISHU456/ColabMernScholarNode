@@ -36,6 +36,8 @@ import IntelligenceTerminal from './course_modules/IntelligenceTerminal';
 import QuickScheduleAdd from './course_modules/QuickScheduleAdd';
 import ActiveScheduleTasks from './course_modules/ActiveScheduleTasks';
 import PreviewWorkspace from './course_modules/PreviewWorkspace';
+import CommunityChat from './course_modules/CommunityChat';
+
 
 
 const CourseDetail = () => {
@@ -843,7 +845,9 @@ const CourseDetail = () => {
     { id: 'yt-links', label: 'Videos', icon: Youtube, color: 'text-red-500 bg-red-50 dark:bg-red-900/20 group-hover:bg-red-100', active: 'bg-red-500 text-white shadow-red-500/30' },
     { id: 'assignments', label: 'Assignments', icon: ClipboardCheck, color: 'text-purple-500 bg-purple-50 dark:bg-purple-900/20 group-hover:bg-purple-100', active: 'bg-purple-500 text-white shadow-purple-500/30' },
     { id: 'completion', label: 'Completion', icon: Award, color: 'text-amber-500 bg-amber-50 dark:bg-amber-900/20 group-hover:bg-amber-100', active: 'bg-amber-500 text-white shadow-amber-500/30' },
+    { id: 'community-chat', label: 'Community', icon: MessageCircle, color: 'text-pink-500 bg-pink-50 dark:bg-pink-900/20 group-hover:bg-pink-100', active: 'bg-pink-500 text-white shadow-pink-500/30' },
     { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 group-hover:bg-indigo-100', active: 'bg-indigo-500 text-white shadow-indigo-500/30' }
+
   ];
 
   const renderPreviewContent = () => {
@@ -1138,7 +1142,18 @@ const CourseDetail = () => {
               >
                 <Chatbot variant="inline" className="h-full border-0 rounded-none shadow-none" noAutoScroll={true} />
               </motion.div>
+            ) : activeSection === 'community-chat' ? (
+              <motion.div
+                key="community-chat"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="h-full"
+              >
+                <CommunityChat courseId={courseId} />
+              </motion.div>
             ) : (
+
               <motion.div 
                 key="workspace-system"
                 initial={{ opacity: 0 }}

@@ -14,8 +14,8 @@ const WaitingAuthorization = () => {
     if (!user) return <Navigate to="/login" />;
     
     // If user is already authorized, send them to their dashboard
-    if (user.isAuthorized !== false) {
-        return <Navigate to="/faculty-dashboard" />;
+    if (user.isAuthorized !== false && user.isActive !== false) {
+        return <Navigate to={user.role === 'student' ? "/dashboard" : "/faculty-dashboard"} />;
     }
 
     const handleLogout = () => {
@@ -56,14 +56,14 @@ const WaitingAuthorization = () => {
                     </div>
 
                     <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white uppercase tracking-tighter mb-4 italic">
-                        Identity Authorization Pending
+                        {user.role === 'student' ? 'Academic Access Pending' : 'Identity Authorization Pending'}
                     </h1>
                     
                     <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-md mx-auto mb-10 leading-relaxed">
-                        Welcome to <span className="text-indigo-600 dark:text-indigo-400 font-bold">ScholarMatrix</span>, <span className="capitalize">{user.name}</span>. Your faculty profile is currently in the verification queue.
+                        Welcome to <span className="text-indigo-600 dark:text-indigo-400 font-bold">ScholarMatrix</span>, <span className="capitalize">{user.name}</span>. Your {user.role === 'student' ? 'student' : 'faculty'} profile is currently in the verification queue.
                     </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 text-left">
+                    
+                    <div className={`grid grid-cols-1 ${user.role === 'teacher' ? 'md:grid-cols-2' : ''} gap-4 mb-10 text-left`}>
                         <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-2">
                             <div className="flex items-center gap-2 text-slate-400 mb-2">
                                 <Mail size={14} className="text-indigo-500" />
@@ -71,15 +71,26 @@ const WaitingAuthorization = () => {
                             </div>
                             <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">{user.email}</p>
                         </div>
-                        <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-2">
-                            <div className="flex items-center gap-2 text-slate-400 mb-2">
-                                <Key size={14} className="text-amber-500" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Registration Token</span>
-                            </div>
-                            <p className="font-mono text-xl font-bold text-amber-500 tracking-wider">
-                                {user.registrationToken || 'SYNC-PENDING'}
-                            </p>
-                        </div>
+                        {user.role === 'teacher' && (
+                          <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-2">
+                              <div className="flex items-center gap-2 text-slate-400 mb-2">
+                                  <Key size={14} className="text-amber-500" />
+                                  <span className="text-[10px] font-bold uppercase tracking-widest">Registration Token</span>
+                              </div>
+                              <p className="font-mono text-xl font-bold text-amber-500 tracking-wider">
+                                  {user.registrationToken || 'SYNC-PENDING'}
+                              </p>
+                          </div>
+                        )}
+                        {user.role === 'student' && (
+                           <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-2">
+                              <div className="flex items-center gap-2 text-slate-400 mb-2">
+                                  <Building size={14} className="text-emerald-500" />
+                                  <span className="text-[10px] font-bold uppercase tracking-widest">Department Sector</span>
+                              </div>
+                              <p className="font-semibold text-slate-800 dark:text-slate-200 uppercase">{user.department || 'GLOBAL'}</p>
+                          </div>
+                        )}
                     </div>
 
                     <div className="bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 rounded-[2rem] p-6 mb-10 flex flex-col items-center justify-center">
