@@ -31,7 +31,7 @@ const CommunityChat = ({ courseId }) => {
   useEffect(() => {
     fetchMessages();
     
-    const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+    const socketUrl = window.API_URL;
     socketRef.current = io(socketUrl, {
       withCredentials: true
     });
@@ -77,7 +77,7 @@ const CommunityChat = ({ courseId }) => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/community-chat/${courseId}`, {
+      const res = await axios.get(`${window.API_URL}/api/community-chat/${courseId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setMessages(res.data);
@@ -141,7 +141,7 @@ const CommunityChat = ({ courseId }) => {
       if (selectedFile) formData.append('file', selectedFile);
       if (replyTo) formData.append('replyTo', replyTo._id);
 
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/community-chat/${courseId}`, 
+      await axios.post(`${window.API_URL}/api/community-chat/${courseId}`, 
         formData,
         { 
           headers: { 

@@ -97,7 +97,7 @@ const StudentDashboard = () => {
     const load = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses`, config);
+        const res = await axios.get(`${window.API_URL}/api/courses`, config);
         
         // Filter by selected semester and department
         const studentCourses = res.data.filter(c => 
@@ -120,7 +120,7 @@ const StudentDashboard = () => {
         await Promise.all(
           studentCourses.map(async (course) => {
             try {
-              const rRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources?courseId=${course.id}`);
+              const rRes = await axios.get(`${window.API_URL}/api/resources?courseId=${course.id}`);
               const resources = rRes.data || [];
               const totalLectures = resources.length;
               const totalVideos = resources.filter((r) => r.type === 'youtube' || r.type === 'yt').length;
@@ -159,7 +159,7 @@ const StudentDashboard = () => {
   const fetchLeaderboard = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/leaderboard`, config);
+      const res = await axios.get(`${window.API_URL}/api/gamification/leaderboard`, config);
       setGlobalLeaderboard(res.data);
     } catch (err) {
       console.error("Failed to fetch leaderboard");
@@ -174,9 +174,9 @@ const StudentDashboard = () => {
     const fetchGamification = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const resStats = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/achievements`, config);
+        const resStats = await axios.get(`${window.API_URL}/api/gamification/achievements`, config);
         setGamifiedStats(resStats.data);
-        const resQuizzes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes`, config);
+        const resQuizzes = await axios.get(`${window.API_URL}/api/gamification/quizzes`, config);
         setAvailableQuizzes(resQuizzes.data);
       } catch (e) {
         console.error(e);
@@ -187,7 +187,7 @@ const StudentDashboard = () => {
 
   const fetchClassroomAttendance = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/classroom`, {
+      const res = await axios.get(`${window.API_URL}/api/attendance/classroom`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       const data = res.data;

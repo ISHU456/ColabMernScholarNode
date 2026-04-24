@@ -152,7 +152,7 @@ const CourseDetail = () => {
 
   const updateScheduleInDB = async (payload) => {
     try {
-      const res = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${courseId}/schedule`, payload, {
+      const res = await axios.put(`${window.API_URL}/api/courses/${courseId}/schedule`, payload, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setTimetable(res.data.schedule);
@@ -178,7 +178,7 @@ const CourseDetail = () => {
 
     try {
       const code = courseId.toUpperCase();
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${code}/schedule/image`, formData, {
+      const res = await axios.post(`${window.API_URL}/api/courses/${code}/schedule/image`, formData, {
         headers: { 
           Authorization: `Bearer ${user.token}`,
           'Content-Type': 'multipart/form-data'
@@ -198,7 +198,7 @@ const CourseDetail = () => {
     if (!window.confirm('Are you sure you want to delete the Master Timetable photo?')) return;
     try {
       const code = courseId.toUpperCase();
-      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${code}/schedule`, { 
+      await axios.put(`${window.API_URL}/api/courses/${code}/schedule`, { 
         timetableImageUrl: '' 
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
@@ -243,7 +243,7 @@ const CourseDetail = () => {
   const fetchProgress = async () => {
     if (!user?._id || !courseId) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/progress/${courseId}`, {
+      const res = await axios.get(`${window.API_URL}/api/progress/${courseId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setDbProgress(res.data);
@@ -296,7 +296,7 @@ const CourseDetail = () => {
   const handleStartLive = async (cId) => {
     if (isUserTeacher) {
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/notifications/broadcast-live`, { courseId: cId }, {
+        await axios.post(`${window.API_URL}/api/notifications/broadcast-live`, { courseId: cId }, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
       } catch (err) {
@@ -330,7 +330,7 @@ const CourseDetail = () => {
     setTimeout(() => setShowProgressToast(false), 3000);
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/progress/update`, {
+      await axios.post(`${window.API_URL}/api/progress/update`, {
         courseId,
         itemId,
         itemType
@@ -353,7 +353,7 @@ const CourseDetail = () => {
 
   const fetchCourseData = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${courseId}`, {
+      const res = await axios.get(`${window.API_URL}/api/courses/${courseId}`, {
          headers: { Authorization: `Bearer ${user.token}` }
       });
       setCourseInfo(res.data);
@@ -372,7 +372,7 @@ const CourseDetail = () => {
   useEffect(() => {
     if (courseId && user?.token && hasIncrementedView.current !== courseId) {
        hasIncrementedView.current = courseId;
-       axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${courseId}/view`, {}, {
+       axios.patch(`${window.API_URL}/api/courses/${courseId}/view`, {}, {
          headers: { Authorization: `Bearer ${user.token}` }
        }).catch(err => console.error('Failed to increment views', err));
     }
@@ -460,7 +460,7 @@ const CourseDetail = () => {
   const handleSaveRewards = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${courseId}/gamification`, rewardForm, config);
+      await axios.put(`${window.API_URL}/api/courses/${courseId}/gamification`, rewardForm, config);
       alert('Neural rewards synchronized.');
       setShowSettingsModal(false);
       fetchCourseData();
@@ -478,7 +478,7 @@ const CourseDetail = () => {
   const fetchResources = async () => {
     try { 
       setIsLoading(true); 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources?courseId=${courseId}`); 
+      const res = await axios.get(`${window.API_URL}/api/resources?courseId=${courseId}`); 
       setResources(res.data); 
     } catch (err) { 
       console.error(err); 
@@ -489,7 +489,7 @@ const CourseDetail = () => {
   
   const fetchAssignments = async () => { 
     try { 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/course/${courseId}`, {
+      const res = await axios.get(`${window.API_URL}/api/assignments/course/${courseId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       }); 
       setAssignments(res.data); 
@@ -501,7 +501,7 @@ const CourseDetail = () => {
 
   const fetchStudentSubmissions = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/my-submissions/${courseId}`, {
+      const res = await axios.get(`${window.API_URL}/api/assignments/my-submissions/${courseId}`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setStudentSubmissions(res.data);
@@ -512,7 +512,7 @@ const CourseDetail = () => {
   
   const fetchAnnouncements = async () => { 
     try { 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/announcements`); 
+      const res = await axios.get(`${window.API_URL}/api/announcements`); 
       const data = Array.isArray(res.data) ? res.data : (res.data.announcements || []);
       setAnnouncements(data.slice(0, 3)); 
     } catch (err) { 
@@ -522,7 +522,7 @@ const CourseDetail = () => {
 
   const fetchOnlineCount = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/course-activity/${courseId}`);
+      const res = await axios.get(`${window.API_URL}/api/auth/course-activity/${courseId}`);
       setOnlineStudents(res.data.onlineCount || 0);
     } catch (err) { 
       console.error(err); 
@@ -531,7 +531,7 @@ const CourseDetail = () => {
 
   const sendPulse = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/pulse`, { courseId }, {
+      await axios.post(`${window.API_URL}/api/auth/pulse`, { courseId }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
     } catch (err) { 
@@ -668,10 +668,10 @@ const CourseDetail = () => {
       if (user?.token) config.headers = { Authorization: `Bearer ${user.token}` };
       
       if (activeSection === 'assignments') {
-        await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/${item._id}?courseId=${courseId}`, config);
+        await axios.delete(`${window.API_URL}/api/assignments/${item._id}?courseId=${courseId}`, config);
         setAssignments(assignments.filter(a => a._id !== item._id));
       } else {
-        await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources/${item._id}?courseId=${courseId}`, config); 
+        await axios.delete(`${window.API_URL}/api/resources/${item._id}?courseId=${courseId}`, config); 
         setResources(resources.filter(r => r._id !== item._id)); 
       }
       
@@ -702,7 +702,7 @@ const CourseDetail = () => {
 
       if (selectedFile) {
         formData.append('file', selectedFile);
-        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources/upload?courseId=${courseId}`, formData, {
+        await axios.post(`${window.API_URL}/api/resources/upload?courseId=${courseId}`, formData, {
           headers: { 
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${user.token}`
@@ -713,7 +713,7 @@ const CourseDetail = () => {
           }
         });
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources?courseId=${courseId}`, {
+        await axios.post(`${window.API_URL}/api/resources?courseId=${courseId}`, {
           title: newTitle, 
           type: newType, 
           fileUrl: newUrl, 
@@ -774,7 +774,7 @@ const CourseDetail = () => {
     let originalType = res.type;
   
     if (res.fileData) {
-      url = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources/file/${res._id}`;
+      url = `${window.API_URL}/api/resources/file/${res._id}`;
     }
   
     let resolvedPreviewType = originalType;

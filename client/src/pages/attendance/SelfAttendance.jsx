@@ -36,7 +36,7 @@ const SelfAttendance = () => {
             const userStr = localStorage.getItem('user');
             const token = userStr ? JSON.parse(userStr).token : null;
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/mfa/mark-attendance`, {
+            const response = await axios.post(`${window.API_URL}/api/mfa/mark-attendance`, {
                 courseId,
                 descriptor: mfaState.faceDescriptor,
                 location: mfaState.location

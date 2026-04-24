@@ -45,7 +45,7 @@ const IntelligenceTerminal = ({
   const saveEdit = async (idx) => {
     if (idx >= 1000) {
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources/${editFormData._id}`, editFormData, {
+            await axios.put(`${window.API_URL}/api/resources/${editFormData._id}`, editFormData, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setEditingIdx(null);
@@ -225,7 +225,7 @@ const IntelligenceTerminal = ({
                         <button
                           onClick={(e) => { 
                             e.stopPropagation(); 
-                            const url = item.fileUrl || `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/resources/file/${item._id}`;
+                            const url = item.fileUrl || `${window.API_URL}/api/resources/file/${item._id}`;
                             const extension = item.fileType || 'pdf';
                             forceDownload(url, `${item.title}.${extension}`);
                           }}

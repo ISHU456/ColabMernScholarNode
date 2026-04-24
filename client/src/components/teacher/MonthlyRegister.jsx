@@ -32,7 +32,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
     const fetchCourses = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses`, config);
+        const res = await axios.get(`${window.API_URL}/api/courses`, config);
         setCourses(res.data);
         if (res.data.length > 0 && !initialCourse && !initialSemester) {
             const defaultSem = (user.role === 'admin' ? 1 : (user.assignedSemesters?.[0] || 1));
@@ -75,8 +75,8 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
 
         // Fetch everything in parallel
         const [studentsRes, attendanceRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${selectedCourse.code}/students?semester=${semester}&section=${section}`, config),
-          axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/course/${selectedCourse._id}?startDate=${startDate}&endDate=${endDate}&semester=${semester}&section=${section}`, config)
+          axios.get(`${window.API_URL}/api/courses/${selectedCourse.code}/students?semester=${semester}&section=${section}`, config),
+          axios.get(`${window.API_URL}/api/attendance/course/${selectedCourse._id}?startDate=${startDate}&endDate=${endDate}&semester=${semester}&section=${section}`, config)
         ]);
 
         setStudents(studentsRes.data);
@@ -85,7 +85,7 @@ const MonthlyRegister = ({ user, initialSemester, initialCourse, onPersistChange
         // Fetch daily bulk attendance only if students exist
         if (studentsRes.data.length > 0) {
             const studentIds = studentsRes.data.map(s => s._id).join(',');
-            const dailyRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/daily/monthly-bulk?studentIds=${studentIds}&month=${month + 1}&year=${year}`, config);
+            const dailyRes = await axios.get(`${window.API_URL}/api/attendance/daily/monthly-bulk?studentIds=${studentIds}&month=${month + 1}&year=${year}`, config);
             setDailyAttendanceRecords(dailyRes.data);
         }
       } catch (error) { 

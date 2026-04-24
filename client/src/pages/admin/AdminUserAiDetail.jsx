@@ -28,7 +28,7 @@ const AdminUserAiDetail = () => {
 
   const fetchAudit = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/chatbot/user-audit/${userId}`, {
+      const res = await axios.get(`${window.API_URL}/api/chatbot/user-audit/${userId}`, {
         headers: { Authorization: `Bearer ${adminUser.token}` }
       });
       setData(res.data);
@@ -41,7 +41,7 @@ const AdminUserAiDetail = () => {
 
   const handleUpdateCredits = async (amount) => {
     try {
-      const res = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/chatbot/update-credits/${userId}`, { amount }, {
+      const res = await axios.put(`${window.API_URL}/api/chatbot/update-credits/${userId}`, { amount }, {
         headers: { Authorization: `Bearer ${adminUser.token}` }
       });
       // Update local state with new credits

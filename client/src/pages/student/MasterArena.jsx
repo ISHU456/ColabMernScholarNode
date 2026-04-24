@@ -38,10 +38,10 @@ const MasterArena = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       const [qRes, lRes, pRes, oRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes`, config),
-        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/leaderboard`, config),
-        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/prizes`, config),
-        axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/orders/my`, config)
+        axios.get(`${window.API_URL}/api/gamification/quizzes`, config),
+        axios.get(`${window.API_URL}/api/gamification/leaderboard`, config),
+        axios.get(`${window.API_URL}/api/prizes`, config),
+        axios.get(`${window.API_URL}/api/orders/my`, config)
       ]);
       
       const sortedPrizes = pRes.data.sort((a,b) => a.rank - b.rank);

@@ -25,45 +25,13 @@ import prizeRoutes from './routes/prizeRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import communityChatRoutes from './routes/communityChatRoutes.js';
 
-
 import Department from './models/Department.js';
 import Course from './models/Course.js';
 import SystemSettings from './models/SystemSettings.js';
 
-// Connect to Database
-connectDB().then(async () => {
-  try {
-    const deptCount = await Department.countDocuments();
-    if (deptCount === 0) {
-      console.log('Database empty, seeding departments...');
-      const departments = [
-        { name: 'Computer Science and Engineering', code: 'CSE', tagline: 'Innovating the Future of Computing' },
-        { name: 'Electronics and Communication', code: 'ECE' },
-        { name: 'Mechanical Engineering', code: 'ME' },
-        { name: 'Civil Engineering', code: 'CE' },
-        { name: 'Electrical Engineering', code: 'EE' }
-      ];
-      const createdDepts = await Department.insertMany(departments);
-      
-      const cse = createdDepts.find(d => d.code === 'CSE');
-      if (cse) {
-        console.log('Seeding initial CSE courses...');
-        const initialCourses = [
-          { code: 'CS301', name: 'Data Structures', credits: 4, semester: 3, type: 'THEORY', department: cse._id, description: 'Core concepts of data organization.' },
-          { code: 'CS401', name: 'Operating Systems', credits: 3, semester: 4, type: 'THEORY', department: cse._id, description: 'Process management and memory.' },
-          { code: 'CS503', name: 'Computer Networks', credits: 4, semester: 5, type: 'THEORY', department: cse._id, description: 'OSI model and TCP/IP.' }
-        ];
-        await Course.insertMany(initialCourses);
-      }
-      console.log('Auto-seeding completed successfully.');
-    }
-  } catch (err) {
-    console.error('Auto-seeding failed:', err);
-  }
-});
-
 const app = express();
 const httpServer = createServer(app);
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://scholarmatrixdeployment-client.onrender.com',
@@ -76,18 +44,24 @@ if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-    credentials: true
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow localhost, the specified origins, and any .onrender.com domain
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.onrender.com')) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked for origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
   },
+  credentials: true
+};
+
+const io = new Server(httpServer, {
+  cors: corsOptions,
 });
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
@@ -121,8 +95,6 @@ app.use('/api/prizes', prizeRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/community-chat', communityChatRoutes);
 
-
-
 // PUBLIC SETTINGS
 app.get('/api/public/settings', async (req, res) => {
     try {
@@ -137,24 +109,16 @@ const roomMembers = {}; // roomId -> Array of { socketId, userId, name, role }
 
 // Socket.io for Real-time features
 io.on('connection', (socket) => {
-  // console.log('New client connected', socket.id);
-  
   socket.on('join-room', (roomId, userData) => {
     socket.join(roomId);
-    
-    // Initialize room if not exists
     if (!roomMembers[roomId]) roomMembers[roomId] = [];
-    
-    // Add user if not already present (based on socket ID)
     const exists = roomMembers[roomId].find(m => m.socketId === socket.id);
     if (!exists) {
       roomMembers[roomId].push({
         socketId: socket.id,
-        ...userData // contains _id, name, role
+        ...userData
       });
     }
-
-    // Broadcast updated member list to everyone in the room
     io.to(roomId).emit('update-members', roomMembers[roomId]);
     socket.to(roomId).emit('user-connected', userData?._id);
 
@@ -167,45 +131,62 @@ io.on('connection', (socket) => {
     });
   });
 
-  // WebRTC Signaling for Live Classes (Broadcast Mode)
   socket.on('start-broadcast', (roomId) => {
     socket.broadcast.to(roomId).emit('broadcaster-ready', socket.id);
   });
-
   socket.on('join-broadcast', (roomId) => {
     socket.to(roomId).emit('new-viewer', socket.id);
   });
-
   socket.on('offer', (toEmail, offer) => {
     socket.to(toEmail).emit('offer', socket.id, offer);
   });
-
   socket.on('answer', (toEmail, answer) => {
     socket.to(toEmail).emit('answer', socket.id, answer);
   });
-
   socket.on('ice-candidate', (toEmail, candidate) => {
     socket.to(toEmail).emit('ice-candidate', socket.id, candidate);
   });
-
-  // Live Chat / Comments
   socket.on('send-message', (roomId, messageData) => {
     io.to(roomId).emit('new-message', messageData);
   });
-
-  // Raise Hand Feature
   socket.on('raise-hand', (roomId, userData) => {
     socket.to(roomId).emit('student-raised-hand', userData);
   });
-
-  socket.on('disconnect', () => {
-    // Notify room of disconnection if needed
-  });
 });
 
-// Use the port from environment or fallback to 5000 (standard for backend)
-const PORT = process.env.PORT || 5000;
+// Connect to Database and then start the server
+connectDB().then(async () => {
+  try {
+    const deptCount = await Department.countDocuments();
+    if (deptCount === 0) {
+      console.log('Database empty, seeding departments...');
+      const departments = [
+        { name: 'Computer Science and Engineering', code: 'CSE', tagline: 'Innovating the Future of Computing' },
+        { name: 'Electronics and Communication', code: 'ECE' },
+        { name: 'Mechanical Engineering', code: 'ME' },
+        { name: 'Civil Engineering', code: 'CE' },
+        { name: 'Electrical Engineering', code: 'EE' }
+      ];
+      const createdDepts = await Department.insertMany(departments);
+      
+      const cse = createdDepts.find(d => d.code === 'CSE');
+      if (cse) {
+        console.log('Seeding initial CSE courses...');
+        const initialCourses = [
+          { code: 'CS301', name: 'Data Structures', credits: 4, semester: 3, type: 'THEORY', department: cse._id, description: 'Core concepts of data organization.' },
+          { code: 'CS401', name: 'Operating Systems', credits: 3, semester: 4, type: 'THEORY', department: cse._id, description: 'Process management and memory.' },
+          { code: 'CS503', name: 'Computer Networks', credits: 4, semester: 5, type: 'THEORY', department: cse._id, description: 'OSI model and TCP/IP.' }
+        ];
+        await Course.insertMany(initialCourses);
+      }
+      console.log('Auto-seeding completed successfully.');
+    }
+  } catch (err) {
+    console.error('Auto-seeding failed:', err);
+  }
 
-httpServer.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  const PORT = process.env.PORT || 5000;
+  httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 });

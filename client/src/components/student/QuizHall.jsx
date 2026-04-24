@@ -15,7 +15,7 @@ const QuizHall = ({ quizzes = [], onSelect, isAdmin, onRefresh }) => {
     setIsAttendeesLoading(true);
     try {
       const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes/${quizId}/attendees`, {
+      const res = await axios.get(`${window.API_URL}/api/gamification/quizzes/${quizId}/attendees`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setLocalAttendees(prev => ({ ...prev, [quizId]: res.data }));
@@ -107,11 +107,11 @@ const QuizHall = ({ quizzes = [], onSelect, isAdmin, onRefresh }) => {
                                  if (!window.confirm(`Reset attempt for ${a.user?.name}?`)) return;
                                  try {
                                    const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
-                                   await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes/${quiz._id}/attempts/${a.user?._id}`, {
+                                   await axios.delete(`${window.API_URL}/api/gamification/quizzes/${quiz._id}/attempts/${a.user?._id}`, {
                                      headers: { Authorization: `Bearer ${token}` }
                                    });
                                    // Refresh local list
-                                   const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes/${quiz._id}/attendees`, {
+                                   const res = await axios.get(`${window.API_URL}/api/gamification/quizzes/${quiz._id}/attendees`, {
                                      headers: { Authorization: `Bearer ${token}` }
                                    });
                                    setLocalAttendees(prev => ({ ...prev, [quiz._id]: res.data }));

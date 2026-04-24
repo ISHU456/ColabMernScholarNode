@@ -19,11 +19,11 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
   const [settings, setSettings] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   useEffect(() => {
-    const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:5001'), { transports: ['websocket'] });
+    const socket = io((window.API_URL), { transports: ['websocket'] });
     
     const fetchSettings = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/public/settings`);
+        const { data } = await axios.get(`${window.API_URL}/api/public/settings`);
         setSettings(data);
       } catch (err) {
         console.error("Failed to load global broadcast settings.");
@@ -33,7 +33,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
     const fetchLiveClasses = async () => {
       if (!user) return;
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/notifications/active-live`, {
+        const { data } = await axios.get(`${window.API_URL}/api/notifications/active-live`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         setLiveClasses(data);

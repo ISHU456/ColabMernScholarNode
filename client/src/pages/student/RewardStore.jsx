@@ -34,7 +34,7 @@ const RewardStore = () => {
   const fetchPrizes = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/prizes`, config);
+      const res = await axios.get(`${window.API_URL}/api/prizes`, config);
       // Sort by rank ASC (1, 2, 3), then coinsRequired DESC
       const sorted = res.data.sort((a,b) => {
         const rankA = a.rank || 999;
@@ -64,7 +64,7 @@ const RewardStore = () => {
     setIsRedeeming(prize._id);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/orders`, { prizeId: prize._id }, config);
+      await axios.post(`${window.API_URL}/api/orders`, { prizeId: prize._id }, config);
       
       const updatedUser = { ...user, coins: user.coins - prize.coinsRequired };
       dispatch(updateProfile(updatedUser));
@@ -97,7 +97,7 @@ const RewardStore = () => {
           'Content-Type': 'multipart/form-data'
         } 
       };
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/prizes`, formData, config);
+      await axios.post(`${window.API_URL}/api/prizes`, formData, config);
       setMessage({ type: 'success', text: 'Prize added to registry' });
       setNewPrize({ title: '', description: '', coinsRequired: '', category: 'OTHER', image: null, rank: '' });
       setShowAdminPanel(false);
@@ -113,7 +113,7 @@ const RewardStore = () => {
     if (!window.confirm("Remove this item from the reward registry?")) return;
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/prizes/${id}`, config);
+      await axios.delete(`${window.API_URL}/api/prizes/${id}`, config);
       setMessage({ type: 'success', text: 'Item removed' });
       fetchPrizes();
     } catch (err) {

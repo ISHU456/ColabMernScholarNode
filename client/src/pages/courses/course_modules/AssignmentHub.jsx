@@ -42,7 +42,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         if (!newAssignment.title) return alert("Please specify a Protocol Title first for Neural Mapping.");
         setIsGeneratingQuiz(true);
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/chatbot/generate-quiz`, {
+            const res = await axios.post(`${window.API_URL}/api/chatbot/generate-quiz`, {
                 topic: newAssignment.title,
                 count: 5
             }, {
@@ -60,7 +60,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         e.stopPropagation();
         if (!window.confirm('Permanently eradicate this assignment and all its submissions?')) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/${asgnId}`, {
+            await axios.delete(`${window.API_URL}/api/assignments/${asgnId}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             if (selectedAssignment?._id === asgnId) setSelectedAssignment(null);
@@ -109,7 +109,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
 
         try {
             if (editingAssignment) {
-                await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/${editingAssignment._id}`, formData, {
+                await axios.put(`${window.API_URL}/api/assignments/${editingAssignment._id}`, formData, {
                     headers: { 
                         Authorization: `Bearer ${user.token}`,
                         'Content-Type': 'multipart/form-data'
@@ -117,7 +117,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
                 });
                 alert("Sector Node Recalibrated.");
             } else {
-                await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/create`, formData, {
+                await axios.post(`${window.API_URL}/api/assignments/create`, formData, {
                     headers: { 
                         Authorization: `Bearer ${user.token}`,
                         'Content-Type': 'multipart/form-data'
@@ -432,7 +432,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
 
     const handleGradeSubmission = async (subId) => {
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/grade/${subId}`, {
+            await axios.put(`${window.API_URL}/api/assignments/grade/${subId}`, {
                 marks: gradingData.marks,
                 feedback: gradingData.feedback,
                 teacherId: user._id
@@ -458,7 +458,7 @@ const AssignmentHub = ({ courseId, isTeacher, user, selectedAssignment, setSelec
         if (selectedAssignment.type === 'quiz') formData.append('quizAnswers', JSON.stringify(quizAnswers));
 
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments/submit`, formData, {
+            await axios.post(`${window.API_URL}/api/assignments/submit`, formData, {
                 headers: { Authorization: `Bearer ${user.token}`, 'Content-Type': 'multipart/form-data' }
             });
             alert("Neural Submission Successful.");

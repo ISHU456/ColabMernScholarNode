@@ -27,7 +27,7 @@ const MFAContainer = () => {
         setVerifying(true);
         setError(null);
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/mfa/verify`, {
+            const response = await axios.post(`${window.API_URL}/api/mfa/verify`, {
                 tempToken: mfaState.tempToken,
                 descriptor: mfaState.faceDescriptor,
                 location: mfaState.location

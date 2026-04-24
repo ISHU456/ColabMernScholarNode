@@ -19,7 +19,7 @@ const QuizArenaHub = () => {
     const fetchQuizzes = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/quizzes`, config);
+        const res = await axios.get(`${window.API_URL}/api/quizzes`, config);
         setAvailableQuizzes(res.data || []);
       } catch (err) {
         console.error("Failed to fetch quizzes", err);

@@ -19,7 +19,7 @@ const AdminPendingTeachers = ({ user }) => {
     const fetchPendingUsers = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/admin/pending-authorizations`, {
+            const res = await axios.get(`${window.API_URL}/api/admin/pending-authorizations`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setPendingUsers(res.data);
@@ -34,7 +34,7 @@ const AdminPendingTeachers = ({ user }) => {
     const fetchApprovedHistory = async () => {
         try {
             setHistoryLoading(true);
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/admin/approved-history`, {
+            const res = await axios.get(`${window.API_URL}/api/admin/approved-history`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setApprovedHistory(res.data);
@@ -53,7 +53,7 @@ const AdminPendingTeachers = ({ user }) => {
     const handleAuthorize = async (id) => {
         try {
             setAuthorizing(id);
-            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/admin/authorizations/${id}/approve`, {}, {
+            await axios.post(`${window.API_URL}/api/admin/authorizations/${id}/approve`, {}, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             // Remove from list
@@ -70,7 +70,7 @@ const AdminPendingTeachers = ({ user }) => {
     const handleUpdateRole = async (userId, newRole) => {
         try {
             setUpdatingRole(userId);
-            await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/admin/users/${userId}/role`, { role: newRole }, {
+            await axios.put(`${window.API_URL}/api/admin/users/${userId}/role`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             // Refresh history to show updated role

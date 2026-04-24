@@ -67,7 +67,7 @@ const GPSConfigPage = () => {
         try {
             const userStr = localStorage.getItem('user');
             const token = userStr ? JSON.parse(userStr).token : null;
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/daily/gps-config`, {
+            const res = await axios.get(`${window.API_URL}/api/attendance/daily/gps-config`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data) {
@@ -124,7 +124,7 @@ const GPSConfigPage = () => {
         try {
             const userStr = localStorage.getItem('user');
             const token = userStr ? JSON.parse(userStr).token : null;
-            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/daily/gps-config`, config, {
+            await axios.post(`${window.API_URL}/api/attendance/daily/gps-config`, config, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessage({ type: 'success', text: 'GPS Configuration updated successfully.' });

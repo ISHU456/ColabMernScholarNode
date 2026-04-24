@@ -195,9 +195,9 @@ const FacultyDashboard = () => {
   useEffect(() => {
     if (!user?.token) return;
     const config = { headers: { Authorization: `Bearer ${user.token}` } };
-    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/assignments`, config).then(r => setAssignments(r.data)).catch(() => {});
-    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/announcements`, config).then(r => setAnnouncements(r.data.announcements || r.data)).catch(() => {});
-    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses`, config).then(r => {
+    axios.get(`${window.API_URL}/api/assignments`, config).then(r => setAssignments(r.data)).catch(() => {});
+    axios.get(`${window.API_URL}/api/announcements`, config).then(r => setAnnouncements(r.data.announcements || r.data)).catch(() => {});
+    axios.get(`${window.API_URL}/api/courses`, config).then(r => {
       setMyCourses(r.data);
       if (lastCourseId) {
         const last = r.data.find(c => c._id === lastCourseId);
@@ -217,7 +217,7 @@ const FacultyDashboard = () => {
   const fetchQuizzes = useCallback(async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes`, config);
+      const res = await axios.get(`${window.API_URL}/api/gamification/quizzes`, config);
       setQuizzes(res.data);
     } catch (err) {
       console.error("Failed to fetch quizzes");
@@ -234,7 +234,7 @@ const FacultyDashboard = () => {
     if (!window.confirm("Are you sure you want to delete this quiz?")) return;
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/gamification/quizzes/${id}`, config);
+      await axios.delete(`${window.API_URL}/api/gamification/quizzes/${id}`, config);
       setQuizzes(quizzes.filter(q => q._id !== id));
     } catch (err) {
       alert("Delete failed: " + err.message);
@@ -251,7 +251,7 @@ const FacultyDashboard = () => {
       // Find course object for ID
       const targetCourse = myCourses.find(c => c.code === courseCode);
       if (targetCourse) {
-        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/notifications/broadcast-live`, { courseId: targetCourse._id }, {
+        await axios.post(`${window.API_URL}/api/notifications/broadcast-live`, { courseId: targetCourse._id }, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
       }

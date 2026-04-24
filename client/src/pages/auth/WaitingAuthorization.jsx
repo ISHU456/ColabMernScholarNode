@@ -25,7 +25,7 @@ const WaitingAuthorization = () => {
     const handleRefreshStatus = async () => {
         try {
             setIsRefreshing(true);
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/profile`, {
+            const res = await axios.get(`${window.API_URL}/api/auth/profile`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             // Update credentials in redux

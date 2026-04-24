@@ -87,7 +87,7 @@ const Profile = () => {
         }
       };
 
-      const res = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/profile`, dataToSend, config);
+      const res = await axios.put(`${window.API_URL}/api/auth/profile`, dataToSend, config);
       
       if(res.status === 200) {
         setSuccessMsg('Profile updated successfully!');
@@ -118,7 +118,7 @@ const Profile = () => {
   const RequestDeactivation = async () => {
     if(window.confirm("Are you sure you want to request account deactivation?")) {
       try {
-        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/profile`, {
+        await fetch(`${window.API_URL}/api/auth/profile`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
           body: JSON.stringify({ deactivationRequested: true })

@@ -43,7 +43,7 @@ const DashboardOverview = ({ user }) => {
   const fetchStats = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/stats/teacher`, config);
+      const res = await axios.get(`${window.API_URL}/api/attendance/stats/teacher`, config);
       setStats(res.data);
       if (res.data.length > 0) {
         fetchActiveCourseStudents(res.data[activeCourseIndex].courseCode);
@@ -59,7 +59,7 @@ const DashboardOverview = ({ user }) => {
     setIsStudentsLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/courses/${courseCode}/students`, config);
+      const res = await axios.get(`${window.API_URL}/api/courses/${courseCode}/students`, config);
       setActiveCourseStudents(res.data);
     } catch (error) {
       console.error('Error fetching course students:', error);
@@ -88,7 +88,7 @@ const DashboardOverview = ({ user }) => {
     try {
       const course = stats[activeCourseIndex];
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/attendance/bulk-mark`, {
+      await axios.post(`${window.API_URL}/api/attendance/bulk-mark`, {
         courseId: course.courseId,
         date: todayStr,
         semester: course.semester || 1,
