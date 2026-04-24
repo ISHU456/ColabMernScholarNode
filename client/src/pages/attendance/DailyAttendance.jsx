@@ -71,9 +71,11 @@ const DailyAttendance = () => {
             });
 
             if (response.status === 201 || response.status === 200) {
-                // Award rewards
-                const userId = JSON.parse(userStr)._id;
-                markAttendanceForStudent({ studentId: userId });
+                // Award rewards (only for students, though the function handles it)
+                const userData = JSON.parse(userStr);
+                if (userData.role === 'student') {
+                    markAttendanceForStudent({ studentId: userData._id });
+                }
                 
                 setShowVerification(false);
                 fetchStatus();
@@ -84,7 +86,18 @@ const DailyAttendance = () => {
         }
     };
 
+    const formatTime = (timeStr) => {
+        if (!timeStr) return '--:--';
+        const [hours, minutes] = timeStr.split(':');
+        const h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${h12}:${minutes} ${ampm}`;
+    };
+
     if (loading) return <div className="flex-1 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div></div>;
+
+    const gpsConfig = status?.gpsConfig;
 
     return (
         <div className="flex-grow flex flex-col p-6 bg-slate-50 dark:bg-[#030712] overflow-y-auto min-h-0">
@@ -138,7 +151,7 @@ const DailyAttendance = () => {
                             
                             <h3 className="text-2xl font-semibold text-gray-900 dark:text-white uppercase mb-2 tracking-tight">Morning Entry</h3>
                             <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed">
-                                Secure your institutional presence between 10:00 AM and 05:00 PM. Requires Face Identification and GPS proximity.
+                                Secure your institutional presence between {formatTime(gpsConfig?.entryStartTime || '10:00')} and {formatTime(gpsConfig?.entryEndTime || '17:00')}. Requires Face Identification and GPS proximity.
                             </p>
                             
                             <div className="mt-auto">
@@ -174,7 +187,7 @@ const DailyAttendance = () => {
                             
                             <h3 className="text-2xl font-semibold text-gray-900 dark:text-white uppercase mb-2 tracking-tight">Institutional Exit</h3>
                             <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed">
-                                Terminal presence verification. Must be completed after Entry and before 05:00 PM for full day credit.
+                                Terminal presence verification. Must be completed after Entry and before {formatTime(gpsConfig?.exitEndTime || '17:00')} for full day credit.
                             </p>
                             
                             <div className="mt-auto">

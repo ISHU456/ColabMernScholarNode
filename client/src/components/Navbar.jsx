@@ -422,28 +422,35 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4">
-                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-2">Main Navigation</span>
-                {navLinks.map((link) => {
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-4 opacity-60">System Navigation</span>
+                {navLinks.map((link, idx) => {
                   const isAdminLink = ['Dashboard', 'HOD Dashboard', 'Faculty Dashboard', 'Admin Dashboard'].includes(link.name);
                   if (isAdminLink && user?.role === 'student') return null;
 
-                  // CUSTOM LOGIC: Swap Courses for Departments if NOT logged in
                   let finalLink = { ...link };
                   if (!user && link.name === 'Courses') {
                     finalLink = { name: 'Departments', path: '/departments', icon: <Building2 size={20} /> };
                   }
 
                   return (
-                    <Link
+                    <motion.div
                       key={finalLink.path}
-                      to={finalLink.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 p-4 rounded-2xl font-semibold text-sm uppercase tracking-wide transition-all ${location.pathname === finalLink.path ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                      initial={{ x: 50, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 + idx * 0.05, type: 'spring', damping: 25, stiffness: 200 }}
                     >
-                      {finalLink.icon}
-                      {finalLink.name}
-                    </Link>
+                      <Link
+                        to={finalLink.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all ${location.pathname === finalLink.path ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                      >
+                        <span className={location.pathname === finalLink.path ? 'text-white' : 'text-primary-500'}>
+                          {finalLink.icon}
+                        </span>
+                        {finalLink.name}
+                      </Link>
+                    </motion.div>
                   );
                 })}
               </div>

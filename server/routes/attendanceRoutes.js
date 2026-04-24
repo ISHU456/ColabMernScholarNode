@@ -33,9 +33,9 @@ router.get('/student/:studentId', protect, getStudentAttendance);
 router.get('/classroom', protect, getClassroomAttendance);
 
 // Daily Face + GPS Attendance
-router.post('/daily/entry', protect, authorize('student'), markDailyEntry);
-router.post('/daily/exit', protect, authorize('student'), markDailyExit);
-router.get('/daily/status', protect, authorize('student'), getDailyStatus);
+router.post('/daily/entry', protect, authorize('student', 'teacher'), markDailyEntry);
+router.post('/daily/exit', protect, authorize('student', 'teacher'), markDailyExit);
+router.get('/daily/status', protect, authorize('student', 'teacher'), getDailyStatus);
 router.get('/daily/monthly', protect, authorize('teacher', 'admin'), getMonthlyDailyAttendance);
 router.post('/daily/gps-config', protect, authorize('admin'), updateGPSConfig);
 router.get('/daily/gps-config', protect, (req, res, next) => {

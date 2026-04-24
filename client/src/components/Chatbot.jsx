@@ -129,7 +129,7 @@ const Chatbot = ({ variant = 'floating', className = '', noAutoScroll = false })
             )}
             <div className="flex items-center gap-3">
               <motion.div layoutId="chatbot-icon" className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center relative overflow-hidden group border border-primary-100 dark:border-primary-500/20">
-                <BrainCircuit size={20} className="relative z-10 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform" />
+                <Sparkles size={20} className="relative z-10 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform" />
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
@@ -189,7 +189,7 @@ const Chatbot = ({ variant = 'floating', className = '', noAutoScroll = false })
                 
                 {msg.sender === 'bot' && (
                   <div className="absolute top-4 right-4 opacity-[0.03] pointer-events-none">
-                    <BrainCircuit size={48} />
+                    <Sparkles size={48} />
                   </div>
                 )}
               </div>
@@ -263,7 +263,7 @@ const Chatbot = ({ variant = 'floating', className = '', noAutoScroll = false })
         >
           <motion.div layoutId="chatbot-icon" className="relative z-10 transition-colors">
             <AnimatePresence mode="wait">
-              {isOpen ? <X size={32} key="x" /> : <BrainCircuit size={32} key="bot" className="animate-pulse" />}
+              {isOpen ? <X size={32} key="x" /> : <Sparkles size={32} key="bot" className="animate-pulse" />}
             </AnimatePresence>
           </motion.div>
           <motion.div 

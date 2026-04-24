@@ -420,7 +420,7 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
           <Route path="/daily-attendance" element={
-            <ProtectedRoute allowedRoles={['student']}>
+            <ProtectedRoute allowedRoles={['student', 'teacher']}>
               <DailyAttendance />
             </ProtectedRoute>
           } />

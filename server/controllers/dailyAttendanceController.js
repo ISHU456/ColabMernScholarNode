@@ -6,7 +6,7 @@ import { getDistance } from '../utils/haversine.js';
 
 // @desc    Mark daily entry attendance
 // @route   POST /api/attendance/daily/entry
-// @access  Student
+// @access  Student/Faculty
 export const markDailyEntry = async (req, res) => {
   try {
     const { descriptor, location } = req.body;
@@ -99,7 +99,7 @@ export const markDailyEntry = async (req, res) => {
 
 // @desc    Mark daily exit attendance
 // @route   POST /api/attendance/daily/exit
-// @access  Student
+// @access  Student/Faculty
 export const markDailyExit = async (req, res) => {
   try {
     const { descriptor, location } = req.body;

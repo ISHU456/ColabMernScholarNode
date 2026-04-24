@@ -36,11 +36,13 @@ h1, h2, h3, h4, h5, h6 {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 html {
   font-size: 14px;
   background-color: #f8fafc;
+  scroll-behavior: smooth;
 }
 
 .dark html {
