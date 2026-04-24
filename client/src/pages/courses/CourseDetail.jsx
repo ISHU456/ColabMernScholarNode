@@ -797,18 +797,22 @@ const CourseDetail = () => {
     ) {
       resolvedPreviewType = 'pdf';
       try {
-        const config = { responseType: 'blob' };
-        // Only attatch token if it's a local request (not external Cloudinary)
-        if (user?.token && !url.includes('cloudinary.com')) {
-          config.headers = { Authorization: `Bearer ${user.token}` };
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          setPreviewItem({ url: url, type: 'pdf', title: res.title, originalType: originalType, id: res._id });
+        } else {
+          const config = { responseType: 'blob' };
+          if (user?.token && !url.includes('cloudinary.com')) {
+            config.headers = { Authorization: `Bearer ${user.token}` };
+          }
+          const response = await axios.get(url, config);
+          const blob = new Blob([response.data], { type: 'application/pdf' });
+          const objectUrl = URL.createObjectURL(blob);
+          setPreviewItem({ url: objectUrl, type: 'pdf', title: res.title, originalType: originalType, id: res._id });
         }
-        const response = await axios.get(url, config);
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const objectUrl = URL.createObjectURL(blob);
-        setPreviewItem({ url: objectUrl, type: 'pdf', title: res.title, originalType: originalType, id: res._id });
       } catch (error) {
         console.error("Error fetching PDF for preview:", error);
-        setPreviewItem({ url: url, type: 'error', title: res.title, originalType: originalType, id: res._id });
+        setPreviewItem({ url: url, type: 'pdf', title: res.title, originalType: originalType, id: res._id });
       }
     } else if (originalType === 'ppt' || (url && (url.toLowerCase().split('?')[0].endsWith('.pptx') || url.toLowerCase().split('?')[0].endsWith('.ppt')))) {
       resolvedPreviewType = 'ppt';
