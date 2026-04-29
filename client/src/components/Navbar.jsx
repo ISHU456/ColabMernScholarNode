@@ -131,7 +131,8 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
         { name: 'Quiz Arena', path: '/master-arena', icon: <Brain size={18} /> }
       ] : []),
       ...(user.role === 'teacher' ? [
-        { name: 'Mark Entry', path: '/results/entry', icon: <Edit size={18} /> }
+        { name: 'Mark Entry', path: '/results/entry', icon: <Edit size={18} /> },
+        { name: 'Attendance', path: '/daily-attendance', icon: <ShieldCheck size={18} /> }
       ] : []),
       ...(user.role === 'admin' || user.role === 'hod' ? [
         { name: 'Results', path: '/results/verify', icon: <CheckCircle size={18} /> },
