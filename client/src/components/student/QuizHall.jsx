@@ -14,7 +14,8 @@ const QuizHall = ({ quizzes = [], onSelect, isAdmin, onRefresh }) => {
     
     setIsAttendeesLoading(true);
     try {
-      const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
+      const storedUser = localStorage.getItem('user');
+      const token = storedUser ? JSON.parse(storedUser)?.token : null;
       const res = await axios.get(`${window.API_URL}/api/gamification/quizzes/${quizId}/attendees`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -106,7 +107,8 @@ const QuizHall = ({ quizzes = [], onSelect, isAdmin, onRefresh }) => {
                                  e.stopPropagation();
                                  if (!window.confirm(`Reset attempt for ${a.user?.name}?`)) return;
                                  try {
-                                   const token = JSON.parse(localStorage.getItem('userInfo'))?.token;
+                                   const storedUser = localStorage.getItem('user');
+                                   const token = storedUser ? JSON.parse(storedUser)?.token : null;
                                    await axios.delete(`${window.API_URL}/api/gamification/quizzes/${quiz._id}/attempts/${a.user?._id}`, {
                                      headers: { Authorization: `Bearer ${token}` }
                                    });
