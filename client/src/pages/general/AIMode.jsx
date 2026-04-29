@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bot, Send, X, Sparkles, BrainCircuit, 
   Zap, Rocket, MessageSquare, ArrowLeft,
-  Loader2, User, Shield, Mic, Paperclip, 
+  Loader2, User, Shield, Mic, 
   Trash2, History, AlertCircle, CheckCircle2,
   Lock, Key, ZapOff, Database, Cpu
 } from 'lucide-react';
@@ -39,7 +39,6 @@ const AIMode = () => {
   
   const [isListening, setIsListening] = useState(false);
   const scrollRef = useRef(null);
-  const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
 
   useEffect(() => {
@@ -134,50 +133,7 @@ const AIMode = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file || !user || isLoading) return;
 
-    if (credits < 2) {
-      alert("Neural Bank Depleted: File analysis requires at least 2 Neural Credits.");
-      e.target.value = '';
-      return;
-    }
-
-    const userMsg = { id: Date.now(), text: `[Identity Scan: Protocol Analyze "${file.name}"]`, sender: 'user', timestamp: new Date() };
-    setMessages(prev => [...prev, userMsg]);
-    setIsLoading(true);
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await axios.post(`${window.API_URL}/api/chatbot/analyze`, formData, {
-        headers: { 
-          Authorization: `Bearer ${user.token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      const botMsg = { 
-        id: Date.now() + 1, 
-        text: res.data.response, 
-        sender: 'bot', 
-        timestamp: new Date() 
-      };
-      setMessages(prev => [...prev, botMsg]);
-      setCredits(res.data.remainingCredits);
-      dispatch(updateProfile({ credits: res.data.remainingCredits }));
-      
-      playNotificationSound();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.response || "Neural scan failed. Check connection or file compatibility.");
-    } finally {
-      setIsLoading(false);
-      if (e.target) e.target.value = '';
-    }
-  };
 
   const toggleVoiceRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -516,22 +472,8 @@ const AIMode = () => {
             </AnimatePresence>
 
             <div className="p-4 md:px-12 md:pb-6">
-               <div className="max-w-4xl mx-auto bg-white rounded-2xl p-2 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+               <div className="max-w-4xl mx-auto bg-white rounded-2xl p-2 pl-6 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
                  <form onSubmit={handleSend} className="flex items-center gap-2">
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    className="hidden" 
-                    onChange={handleFileUpload} 
-                    accept=".pdf,.txt,.docx,.doc,.png,.jpg,.jpeg" 
-                  />
-                  <button 
-                    type="button" 
-                    onClick={() => fileInputRef.current.click()}
-                    className="pl-3 pr-2 py-2 text-gray-800 hover:text-orange-600 transition-colors"
-                  >
-                    <Paperclip size={20} />
-                  </button>
                    <input 
                      type="text"
                      value={input}
