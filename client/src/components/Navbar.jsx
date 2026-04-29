@@ -183,14 +183,13 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="bg-amber-500 text-white p-2 rounded-xl shadow-lg shadow-amber-500/20">
-              <Star size={18} className="fill-white/20" />
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 overflow-hidden rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <img src="/images/logo.png" alt="ScholarMatrix Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-400 dark:to-orange-400 uppercase tracking-tight">
+            <span className="text-xl lg:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400 uppercase tracking-tighter">
               {settings?.institutionName || 'ScholarMatrix'}
             </span>
-
           </Link>
           
           {/* Desktop Nav - Main Links (Justified Right) */}
@@ -412,9 +411,9 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
               className="fixed right-0 top-0 h-full w-[300px] bg-white dark:bg-[#0f172a] z-[999] shadow-2xl border-l border-gray-100 dark:border-gray-800 lg:hidden flex flex-col p-8"
             >
               <div className="flex items-center justify-between mb-12">
-                <div className="flex items-center gap-2.5">
-                  <div className="bg-amber-500 text-white p-2 rounded-xl">
-                    <Star size={18} className="fill-white/20" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 overflow-hidden rounded-xl shadow-lg">
+                    <img src="/images/logo.png" alt="Logo" className="w-full h-full object-cover" />
                   </div>
                   <span className="text-xl font-semibold text-gray-900 dark:text-white uppercase tracking-tighter">ScholarMatrix</span>
                 </div>

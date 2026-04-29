@@ -36,13 +36,15 @@ const storage = new CloudinaryStorage({
       resource_type = 'raw';
     }
 
+    const isProfileUpdate = req.originalUrl?.includes('/profile');
+
     return {
       folder: folder,
       resource_type: resource_type,
       format: fileType === 'image' ? 'webp' : undefined, // Auto-convert images to optimized webp
       allowed_formats: fileType === 'image' ? ['jpg', 'png', 'jpeg', 'gif', 'webp'] : undefined,
       public_id: `${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9]/g, '_')}`,
-      transformation: fileType === 'image' ? [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }] : undefined
+      transformation: (fileType === 'image' && isProfileUpdate) ? [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }] : undefined
     };
   },
 });

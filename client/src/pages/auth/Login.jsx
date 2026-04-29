@@ -28,8 +28,18 @@ const LoginPortal = () => {
     <div className="min-h-[calc(100vh-73px)] w-full flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-gray-200 dark:from-dark-bg dark:to-[#0f172a]">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12">
-           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">Login to your account</h1>
-           <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">Please select your portal to continue.</p>
+           <div className="flex justify-center mb-8">
+             <motion.div 
+               initial={{ scale: 0 }}
+               animate={{ scale: 1 }}
+               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+               className="w-24 h-24 rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800"
+             >
+               <img src="/images/logo.png" alt="Logo" className="w-full h-full object-cover" />
+             </motion.div>
+           </div>
+           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4 uppercase italic">ScholarMatrix</h1>
+           <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-widest font-bold opacity-60">Authentication Node</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

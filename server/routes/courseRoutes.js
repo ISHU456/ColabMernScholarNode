@@ -30,6 +30,18 @@ router.put('/:code/auto-restrict', protect, isCourseTeacher, toggleAutoRestrict)
 router.put('/:code/deadline', protect, isCourseTeacher, updateCourseDeadline);
 router.patch('/:code/view', protect, incrementCourseViews);
 router.put('/:code/gamification', protect, isCourseTeacher, updateCourseGamification);
-router.post('/:code/schedule/image', protect, isCourseTeacher, upload.single('file'), uploadTimetableImage);
+router.post('/:code/schedule/image', protect, isCourseTeacher, (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      console.error('TIMETABLE UPLOAD FAILURE:', err);
+      return res.status(400).json({ 
+        message: 'Failed to process the timetable image.', 
+        error: err.message,
+        code: err.code || 'UPLOAD_ERROR'
+      });
+    }
+    next();
+  });
+}, uploadTimetableImage);
 
 export default router;
