@@ -23,8 +23,8 @@ export const markDailyEntry = async (req, res) => {
     }
 
     // 2. Check Entry Window
-    const now = new Date();
-    const currentTimeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const currentTimeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
     
     if (currentTimeStr < gpsConfig.entryStartTime || currentTimeStr > gpsConfig.entryEndTime) {
       return res.status(403).json({ 
@@ -59,7 +59,6 @@ export const markDailyEntry = async (req, res) => {
 
     // 4. Record Entry
     // Use IST timezone for date calculation to avoid UTC offset issues (Render servers are often in UTC)
-    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
     const today = new Date(Date.UTC(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate()));
 
     let attendance = await DailyAttendance.findOne({ student: userId, date: today });
@@ -116,8 +115,8 @@ export const markDailyExit = async (req, res) => {
     }
 
     // 2. Check Exit Window
-    const now = new Date();
-    const currentTimeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const currentTimeStr = nowIST.getHours().toString().padStart(2, '0') + ':' + nowIST.getMinutes().toString().padStart(2, '0');
     
     if (currentTimeStr < gpsConfig.exitStartTime || currentTimeStr > gpsConfig.exitEndTime) {
       return res.status(403).json({ 
@@ -148,7 +147,6 @@ export const markDailyExit = async (req, res) => {
     }
 
     // 3. Record Exit
-    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
     const today = new Date(Date.UTC(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate()));
 
     let attendance = await DailyAttendance.findOne({ student: userId, date: today });
