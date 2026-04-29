@@ -43,7 +43,7 @@ const AdminQuizAttendees = ({ quizId, onClose, user }) => {
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10">
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 lg:p-10">
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
