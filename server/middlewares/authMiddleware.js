@@ -11,21 +11,21 @@ export const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
 
+      if (!token || token === 'null' || token === 'undefined') {
+        return res.status(401).json({ message: 'Not authorized, token missing or invalid' });
+      }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey123');
 
       req.user = await User.findById(decoded.id).select('-password');
 
       next();
     } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: 'Not authorized, token failed' });
-      return;
+      console.error(`Token verification failed: ${error.message}`);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
-    return;
+  } else {
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 

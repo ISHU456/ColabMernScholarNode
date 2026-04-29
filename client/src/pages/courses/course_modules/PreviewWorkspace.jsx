@@ -113,26 +113,34 @@ const PreviewWorkspace = ({
       case 'pdf':
         return (
           <SimplePreviewWrapper>
-            <div className="relative w-full h-full flex flex-col">
-              {/* Optional mobile warning/action bar at the top */}
-              <div className="lg:hidden flex items-center justify-between px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-900/30">
-                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-tight">Mobile Reader Mode</span>
+            <div className="relative w-full h-full flex flex-col min-h-[500px]">
+              <object
+                data={previewItem.url}
+                type="application/pdf"
+                width="100%"
+                height="100%"
+                className="w-full h-full border-0 flex-1"
+              >
+                <iframe
+                  src={previewItem.url}
+                  className="w-full h-full border-0"
+                  title="PDF Preview"
+                  loading="lazy"
+                />
+              </object>
+              
+              {/* Subtle floating action for mobile if they still need it */}
+              <div className="lg:hidden absolute bottom-4 right-4 z-20">
                 <a
                   href={previewItem.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-bold text-primary-600 dark:text-primary-400 flex items-center gap-1 uppercase"
+                  className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-transform"
+                  title="Open Fullscreen"
                 >
-                  <ExternalLink size={12} /> Open Native
+                  <ExternalLink size={20} />
                 </a>
               </div>
-              
-              <iframe
-                src={previewItem.url}
-                className="w-full h-full border-0 flex-1"
-                title="PDF Preview"
-                loading="lazy"
-              />
             </div>
           </SimplePreviewWrapper>
         );
