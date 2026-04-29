@@ -16,6 +16,7 @@ import DashboardOverview from '../../components/teacher/DashboardOverview';
 import AttendanceManager from '../../components/teacher/AttendanceManager';
 import CourseAccessManager from '../../components/teacher/CourseAccessManager';
 import MonthlyRegister from '../../components/teacher/MonthlyRegister';
+import FacultySelfAttendance from '../../components/teacher/FacultySelfAttendance';
 import QuizGenerator from '../../components/teacher/QuizGenerator';
 import AdminQuizAttendees from '../../components/admin/AdminQuizAttendees';
 import QuizArena from '../../components/student/QuizArena';
@@ -269,6 +270,7 @@ const FacultyDashboard = () => {
     { id:'overview', label:'Dashboard', icon: Activity },
     { id:'attendance', label:'Attendance', icon: FileCheck },
     { id:'register', label:'Monthly Register', icon: Layers },
+    { id:'my-attendance', label:'My Attendance', icon: ClipboardCheck },
     { id:'access', label:'Access Control', icon: ShieldCheck },
     { id:'schedule', label:'Schedule', icon: CalendarDays },
     { id:'courses', label:'My Course Hub', icon: BookOpen },
@@ -383,6 +385,7 @@ const FacultyDashboard = () => {
              {activeTab === 'overview' && <DashboardOverview user={user} />}
              {activeTab === 'attendance' && <AttendanceManager user={user} initialSemester={globalSelectedSemester} initialCourse={globalSelectedCourse} onPersistChange={(s,c)=>{setGlobalSelectedSemester(s);setGlobalSelectedCourse(c);}} />}
              {activeTab === 'register' && <MonthlyRegister user={user} initialSemester={globalSelectedSemester} initialCourse={globalSelectedCourse} onPersistChange={(s,c)=>{setGlobalSelectedSemester(s);setGlobalSelectedCourse(c);}} />}
+             {activeTab === 'my-attendance' && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}><FacultySelfAttendance user={user} /></motion.div>}
              {activeTab === 'access' && <CourseAccessManager user={user} initialSemester={globalSelectedSemester} initialCourse={globalSelectedCourse} onPersistChange={(s,c)=>{setGlobalSelectedSemester(s);setGlobalSelectedCourse(c);}} />}
              {activeTab === 'schedule' && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
